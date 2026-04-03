@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { HeroHeadline } from "@/components/hero-headline";
+import { LandingPageAmbient } from "@/components/landing-page-ambient";
 import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
@@ -103,23 +105,35 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: jsonLdString(homeSchemas) }}
       />
       <SiteHeader />
-      <main id="main" className="pb-20">
-        <section className="relative overflow-hidden">
-          <div className="absolute left-10 top-12 h-56 w-56 rounded-full bg-[#dce8ff] blur-3xl" />
-          <div className="absolute right-0 top-24 h-72 w-72 rounded-full bg-[#ffe1cf] blur-3xl" />
+      <main id="main" className="landing-page pb-20">
+        <LandingPageAmbient />
+        <section className="hero-stage relative overflow-hidden">
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-hero"
+            data-book-dock
+            data-book-open="54"
+            data-book-scale="0.88"
+            data-book-yaw="-18"
+            data-book-pitch="15"
+            data-book-roll="-6"
+            data-book-lift="-18"
+          />
+          <div aria-hidden="true" className="hero-aura hero-aura-blue" />
+          <div aria-hidden="true" className="hero-aura hero-aura-peach" />
+          <div aria-hidden="true" className="hero-aura hero-aura-mist" />
+          <div aria-hidden="true" className="hero-grid" />
+          <div aria-hidden="true" className="hero-orbit hero-orbit-large" />
+          <div aria-hidden="true" className="hero-orbit hero-orbit-small" />
           <div className="section-shell relative py-14 md:py-20">
             <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_420px]">
               <div>
                 <span className="eyebrow">{siteConfig.heroLabel}</span>
-                <h1 className="mt-6 font-headline text-5xl leading-[0.95] text-primary md:text-7xl">
-                  CUET coaching in Munirka for students who want a clear study
-                  plan and honest guidance.
-                </h1>
+                <HeroHeadline />
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                  UNIMONKS helps students prepare for CUET UG and PG with GT,
-                  English, domain classes, mocks, and admissions support in
-                  Munirka, New Delhi. Read practical guidance, explore recent
-                  articles, and book counseling from one place.
+                  UNIMONKS curates GT, English, domain classes, mock review,
+                  and admissions support into one calm, high-trust preparation
+                  journey in Munirka, New Delhi.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
@@ -158,7 +172,21 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section id="programs" className="section-shell py-8 md:py-14">
+        <section
+          id="programs"
+          className="section-shell relative py-8 md:py-14"
+        >
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-courses"
+            data-book-dock
+            data-book-open="56"
+            data-book-scale="1.05"
+            data-book-yaw="22"
+            data-book-pitch="15"
+            data-book-roll="2"
+            data-book-lift="4"
+          />
           <div className="grid gap-10 lg:grid-cols-[0.85fr_minmax(0,1fr)]">
             <div>
               <span className="eyebrow">Courses</span>
@@ -200,7 +228,18 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section-shell py-8 md:py-14">
+        <section className="section-shell relative py-8 md:py-14">
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-journey"
+            data-book-dock
+            data-book-open="104"
+            data-book-scale="0.93"
+            data-book-yaw="10"
+            data-book-pitch="18"
+            data-book-roll="5"
+            data-book-lift="-10"
+          />
           <div className="panel overflow-hidden p-6 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[0.8fr_minmax(0,1fr)]">
               <div>
@@ -234,7 +273,18 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section-shell py-8 md:py-14">
+        <section className="section-shell relative py-8 md:py-14">
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-articles"
+            data-book-dock
+            data-book-open="122"
+            data-book-scale="0.9"
+            data-book-yaw="-10"
+            data-book-pitch="16"
+            data-book-roll="-5"
+            data-book-lift="-16"
+          />
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <span className="eyebrow">Latest Articles</span>
@@ -274,7 +324,18 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section id="faq" className="section-shell py-8 md:py-14">
+        <section id="faq" className="section-shell relative py-8 md:py-14">
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-faq"
+            data-book-dock
+            data-book-open="92"
+            data-book-scale="0.92"
+            data-book-yaw="12"
+            data-book-pitch="14"
+            data-book-roll="6"
+            data-book-lift="8"
+          />
           <div className="grid gap-10 lg:grid-cols-[0.8fr_minmax(0,1fr)]">
             <div>
               <span className="eyebrow">FAQs</span>
@@ -302,7 +363,18 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section-shell py-8 md:py-14">
+        <section className="section-shell relative py-8 md:py-14">
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-contact"
+            data-book-dock
+            data-book-open="66"
+            data-book-scale="0.9"
+            data-book-yaw="18"
+            data-book-pitch="12"
+            data-book-roll="8"
+            data-book-lift="4"
+          />
           <div className="panel grid gap-8 p-6 md:grid-cols-[1fr_0.9fr] md:p-10">
             <div>
               <span className="eyebrow">Visit UNIMONKS In Munirka</span>

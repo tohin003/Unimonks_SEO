@@ -183,15 +183,22 @@ export function LandingPageAmbient() {
       const roll = lerp(fromDock.roll, toDock.roll, easedAmount);
       const lift = lerp(fromDock.lift, toDock.lift, easedAmount);
       const travelArc = Math.sin(easedAmount * Math.PI) * (isCompact ? 8 : 20);
-      const fitWidth = Math.min(width * 0.9, height * 0.78 * 0.92);
-      const minWidth = isCompact ? 124 : 146;
-      const maxWidth = isCompact ? 204 : 318;
-      const dockBoundWidth = Math.max(Math.min(fitWidth, maxWidth), minWidth);
-      const bookWidth = Math.min(
-        dockBoundWidth * scale,
-        width * 0.94,
-        height * 0.78 * 0.96,
+      const widthFit = width * (isCompact ? 0.88 : 0.98);
+      const heightFit = height * (isCompact ? 0.74 : 0.82);
+      const fitWidth = Math.min(widthFit, heightFit);
+      const minWidth = isCompact ? 126 : 150;
+      const maxWidth = isCompact ? 220 : 390;
+      const bookWidth = Math.max(
+        minWidth,
+        Math.min(fitWidth * scale, maxWidth),
       );
+      const sizeProgress = Math.min(
+        Math.max((bookWidth - minWidth) / Math.max(maxWidth - minWidth, 1), 0),
+        1,
+      );
+      const sceneScale = isCompact
+        ? 0.92 + sizeProgress * 0.12
+        : 0.88 + sizeProgress * 0.24;
 
       node.style.setProperty("--landing-progress", progress.toFixed(4));
       node.style.setProperty("--landing-drift-y", `${window.scrollY * -0.1}px`);
@@ -205,10 +212,7 @@ export function LandingPageAmbient() {
         `${y - travelArc + sway * (isCompact ? 5 : 9)}px`,
       );
       node.style.setProperty("--landing-book-open", `${open}deg`);
-      node.style.setProperty(
-        "--landing-book-scale",
-        (0.92 + scale * 0.08).toFixed(3),
-      );
+      node.style.setProperty("--landing-book-scale", sceneScale.toFixed(3));
       node.style.setProperty("--landing-book-yaw", `${yaw + wave * 4}deg`);
       node.style.setProperty("--landing-book-pitch", `${pitch + sway * 1.5}deg`);
       node.style.setProperty("--landing-book-roll", `${roll + wave * 1.2}deg`);

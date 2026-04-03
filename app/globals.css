@@ -188,11 +188,18 @@
   transform: translateX(-42%);
 }
 
-.landing-book-dock-courses {
+.landing-book-dock-courses-intro {
   left: clamp(2rem, 5vw, 4.5rem);
-  top: 11.5rem;
-  width: clamp(14rem, 17vw, 17rem);
-  height: clamp(19rem, 25vw, 21rem);
+  top: 15rem;
+  width: clamp(11rem, 13vw, 12.5rem);
+  height: clamp(15rem, 19vw, 17rem);
+}
+
+.landing-book-dock-courses-showcase {
+  left: clamp(3rem, 6vw, 5.25rem);
+  top: 26rem;
+  width: clamp(15.5rem, 20vw, 19rem);
+  height: clamp(20rem, 27vw, 22rem);
 }
 
 .landing-book-dock-journey {
@@ -209,18 +216,32 @@
   height: clamp(13rem, 17vw, 15rem);
 }
 
-.landing-book-dock-faq {
-  left: 2rem;
-  top: 12rem;
-  width: clamp(10rem, 13vw, 12rem);
-  height: clamp(15rem, 19vw, 17rem);
+.landing-book-dock-faq-intro {
+  left: clamp(2rem, 4vw, 3.5rem);
+  top: 8rem;
+  width: clamp(10.5rem, 12vw, 12rem);
+  height: clamp(14rem, 18vw, 15.5rem);
+}
+
+.landing-book-dock-faq-showcase {
+  left: clamp(3.5rem, 7vw, 6rem);
+  top: 25rem;
+  width: clamp(15rem, 20vw, 19rem);
+  height: clamp(20rem, 27vw, 23rem);
 }
 
 .landing-book-dock-contact {
-  left: 2rem;
-  top: 8rem;
-  width: clamp(10rem, 13vw, 12rem);
-  height: clamp(14rem, 18vw, 16rem);
+  left: clamp(3rem, 6vw, 5rem);
+  top: 6rem;
+  width: clamp(14rem, 18vw, 17rem);
+  height: clamp(18rem, 24vw, 20rem);
+}
+
+.landing-book-dock-outro {
+  left: clamp(4rem, 8vw, 7rem);
+  bottom: 1.5rem;
+  width: clamp(8.25rem, 10vw, 10rem);
+  height: clamp(10.5rem, 14vw, 12rem);
 }
 
 .ambient-book-scene {
@@ -391,6 +412,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  container-type: inline-size;
   border-radius: 0.7rem 1.7rem 1.7rem 0.7rem;
   border: 1px solid rgba(255, 255, 255, 0.42);
   background:
@@ -431,13 +453,14 @@
   display: flex;
   height: 100%;
   flex-direction: column;
-  padding: 1.5rem 1.45rem 1.6rem 1.3rem;
+  padding: 7.8cqi 8.4cqi 8.6cqi 7.4cqi;
 }
 
 .ambient-book-front-inner {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  container-type: inline-size;
   border-radius: 0.7rem 1.7rem 1.7rem 0.7rem;
   border: 1px solid rgba(224, 215, 201, 0.72);
   background:
@@ -464,12 +487,12 @@
   display: flex;
   height: 100%;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 1.3rem 1.15rem 1.2rem 1.05rem;
+  gap: 2.6cqi;
+  padding: 6.8cqi 7.1cqi 6.2cqi 6.5cqi;
 }
 
 .ambient-book-inner-kicker {
-  font-size: 0.62rem;
+  font-size: 2.55cqi;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -478,7 +501,7 @@
 
 .ambient-book-inner-line {
   display: block;
-  height: 0.42rem;
+  height: 1.35cqi;
   width: 100%;
   border-radius: 9999px;
   background: linear-gradient(90deg, rgba(163, 181, 214, 0.36), rgba(214, 198, 177, 0.18));
@@ -491,8 +514,8 @@
 .ambient-book-inner-card {
   margin-top: auto;
   display: block;
-  height: 4.7rem;
-  border-radius: 1rem;
+  height: 17.8cqi;
+  border-radius: 0.86em;
   border: 1px solid rgba(167, 184, 214, 0.24);
   background:
     linear-gradient(140deg, rgba(228, 237, 253, 0.86), rgba(255, 247, 236, 0.82)),
@@ -500,7 +523,7 @@
 }
 
 .ambient-book-kicker {
-  font-size: 10px;
+  font-size: 2.7cqi;
   font-weight: 700;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -508,40 +531,40 @@
 }
 
 .ambient-book-title {
-  margin-top: 0.9rem;
-  max-width: 7ch;
+  margin-top: 2.4cqi;
+  max-width: 5.1ch;
   font-family: var(--font-headline, inherit);
-  font-size: clamp(1.9rem, 1.2rem + 1.5vw, 3.1rem);
-  line-height: 0.95;
+  font-size: 13.8cqi;
+  line-height: 0.92;
   color: #17233b;
 }
 
 .ambient-book-subtitle {
-  margin-top: 1rem;
-  max-width: 15ch;
-  font-size: 0.94rem;
-  line-height: 1.7;
+  margin-top: 4cqi;
+  max-width: 14ch;
+  font-size: 4.15cqi;
+  line-height: 1.5;
   color: rgba(51, 65, 85, 0.9);
 }
 
 .ambient-book-thread {
   margin-top: auto;
-  height: 3.5rem;
-  width: 3.5rem;
+  height: 14.4cqi;
+  width: 14.4cqi;
   align-self: flex-start;
   border-radius: 9999px;
   background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(226, 237, 255, 0.5) 38%, rgba(23, 35, 59, 0.12) 38%, rgba(23, 35, 59, 0.04) 60%, transparent 60%);
 }
 
 .ambient-book-chip {
-  margin-top: 1rem;
+  margin-top: 3.4cqi;
   display: inline-flex;
   align-self: flex-start;
   border-radius: 9999px;
   border: 1px solid rgba(23, 35, 59, 0.14);
   background: rgba(255, 255, 255, 0.72);
-  padding: 0.45rem 0.85rem;
-  font-size: 0.72rem;
+  padding: 1.9cqi 3.35cqi;
+  font-size: 3.1cqi;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -926,20 +949,11 @@
   }
 
   .ambient-book-front-copy {
-    padding: 1.05rem 1rem 1.15rem 0.95rem;
-  }
-
-  .ambient-book-title {
-    font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem);
+    padding: 7.8cqi 8.2cqi 8.4cqi 7.2cqi;
   }
 
   .ambient-book-subtitle {
     max-width: 12ch;
-    font-size: 0.78rem;
-  }
-
-  .ambient-book-chip {
-    font-size: 0.62rem;
   }
 
   .landing-ambient-lines {

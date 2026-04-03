@@ -178,14 +178,25 @@ export default async function HomePage() {
         >
           <span
             aria-hidden="true"
-            className="landing-book-dock landing-book-dock-courses"
+            className="landing-book-dock landing-book-dock-courses-intro"
             data-book-dock
-            data-book-open="56"
-            data-book-scale="1.05"
-            data-book-yaw="22"
+            data-book-open="52"
+            data-book-scale="0.86"
+            data-book-yaw="18"
+            data-book-pitch="14"
+            data-book-roll="0"
+            data-book-lift="0"
+          />
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-courses-showcase"
+            data-book-dock
+            data-book-open="58"
+            data-book-scale="1.08"
+            data-book-yaw="26"
             data-book-pitch="15"
-            data-book-roll="2"
-            data-book-lift="4"
+            data-book-roll="3"
+            data-book-lift="2"
           />
           <div className="grid gap-10 lg:grid-cols-[0.85fr_minmax(0,1fr)]">
             <div>
@@ -327,14 +338,25 @@ export default async function HomePage() {
         <section id="faq" className="section-shell relative py-8 md:py-14">
           <span
             aria-hidden="true"
-            className="landing-book-dock landing-book-dock-faq"
+            className="landing-book-dock landing-book-dock-faq-intro"
             data-book-dock
-            data-book-open="92"
-            data-book-scale="0.92"
-            data-book-yaw="12"
-            data-book-pitch="14"
+            data-book-open="78"
+            data-book-scale="0.82"
+            data-book-yaw="16"
+            data-book-pitch="15"
             data-book-roll="6"
-            data-book-lift="8"
+            data-book-lift="4"
+          />
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-faq-showcase"
+            data-book-dock
+            data-book-open="54"
+            data-book-scale="1.16"
+            data-book-yaw="28"
+            data-book-pitch="14"
+            data-book-roll="4"
+            data-book-lift="-4"
           />
           <div className="grid gap-10 lg:grid-cols-[0.8fr_minmax(0,1fr)]">
             <div>
@@ -368,12 +390,23 @@ export default async function HomePage() {
             aria-hidden="true"
             className="landing-book-dock landing-book-dock-contact"
             data-book-dock
-            data-book-open="66"
-            data-book-scale="0.9"
-            data-book-yaw="18"
-            data-book-pitch="12"
-            data-book-roll="8"
-            data-book-lift="4"
+            data-book-open="42"
+            data-book-scale="0.96"
+            data-book-yaw="-24"
+            data-book-pitch="16"
+            data-book-roll="-8"
+            data-book-lift="-6"
+          />
+          <span
+            aria-hidden="true"
+            className="landing-book-dock landing-book-dock-outro"
+            data-book-dock
+            data-book-open="18"
+            data-book-scale="0.68"
+            data-book-yaw="-46"
+            data-book-pitch="10"
+            data-book-roll="-14"
+            data-book-lift="16"
           />
           <div className="panel grid gap-8 p-6 md:grid-cols-[1fr_0.9fr] md:p-10">
             <div>

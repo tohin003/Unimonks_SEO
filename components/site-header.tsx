@@ -5,6 +5,7 @@ import { Logo } from "@/components/logo";
 
 const navLinks = [
   { href: "/#programs", label: "Courses" },
+  { href: "/cuet-coaching-in-munirka", label: "Locations" },
   { href: "/hub", label: "Knowledge Hub" },
   { href: "/blog", label: "Blog" },
   { href: "/#faq", label: "FAQs" },

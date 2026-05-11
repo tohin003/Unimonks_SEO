@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
+import { locations } from "@/lib/locations";
 import { knowledgeTracks, siteConfig } from "@/lib/site";
 
 const footerLinks = [
@@ -13,6 +14,35 @@ const footerLinks = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-slate-200/80 bg-[#f4efe5]">
+      <div className="mx-auto max-w-7xl px-6 pt-14 md:px-10">
+        <div className="rounded-[28px] border border-slate-200/80 bg-white/70 p-6 md:p-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+            CUET coaching across South Delhi
+          </p>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600">
+            One centre in Munirka, students travelling in from every adjacent
+            neighbourhood. Each page below shows the commute, nearby schools,
+            and the questions families from that area usually ask.
+          </p>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {locations.map((location) => (
+              <li key={location.slug}>
+                <Link
+                  href={`/cuet-coaching-in-${location.slug}`}
+                  className="block rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-primary hover:text-primary"
+                >
+                  <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Coaching in
+                  </span>
+                  <span className="mt-1 block text-base text-primary">
+                    {location.area}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-14 md:grid-cols-[1.3fr_1fr_1.2fr] md:px-10">
         <div className="space-y-5">
           <Logo showTagline />

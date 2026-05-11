@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
 
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
+import {
+  buildFounderSchema,
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+} from "@/lib/schemas";
 
 import "./globals.css";
 
@@ -63,30 +68,12 @@ export const viewport: Viewport = {
   themeColor: "#f7f5ef",
 };
 
-const educationalOrganizationSchema = {
+const siteGraph = {
   "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  name: siteConfig.name,
-  url: siteConfig.siteUrl,
-  logo: absoluteUrl("/unimonks-logo.png"),
-  description: siteConfig.description,
-  email: siteConfig.email,
-  telephone: siteConfig.phoneDisplay,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: siteConfig.addressLines[0],
-    addressLocality: "Munirka",
-    addressRegion: "New Delhi",
-    postalCode: "110067",
-    addressCountry: "IN",
-  },
-  areaServed: ["Munirka", "New Delhi", "Delhi NCR"],
-  knowsAbout: [
-    "CUET UG preparation",
-    "CUET PG preparation",
-    "General Test preparation",
-    "English language preparation",
-    "University admissions guidance",
+  "@graph": [
+    buildOrganizationSchema(),
+    buildFounderSchema(),
+    buildWebSiteSchema(),
   ],
 };
 
@@ -107,7 +94,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: jsonLdString(educationalOrganizationSchema),
+            __html: jsonLdString(siteGraph),
           }}
         />
         {children}

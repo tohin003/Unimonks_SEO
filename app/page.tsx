@@ -9,6 +9,11 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getFeaturedPosts } from "@/lib/posts";
 import {
+  buildBreadcrumbSchema,
+  buildCourseListSchema,
+  buildFAQSchema,
+} from "@/lib/schemas";
+import {
   faqItems,
   jsonLdString,
   knowledgeTracks,
@@ -33,34 +38,11 @@ export const metadata: Metadata = {
 };
 
 const homeSchemas = [
-  {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    name: "UNIMONKS Courses",
-    itemListElement: programs.map((program, index) => ({
-      "@type": "Course",
-      position: index + 1,
-      name: program.name,
-      description: program.summary,
-      provider: {
-        "@type": "EducationalOrganization",
-        name: siteConfig.name,
-        url: siteConfig.siteUrl,
-      },
-    })),
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqItems.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  },
+  buildBreadcrumbSchema([
+    { name: "Home", url: siteConfig.siteUrl },
+  ]),
+  buildCourseListSchema(),
+  buildFAQSchema(),
 ];
 
 const supportSteps = [

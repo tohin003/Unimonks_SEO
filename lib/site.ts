@@ -14,12 +14,51 @@ export const siteConfig = {
     "2nd Floor Chhabra Complex, Opp Canara Bank, Laxmi Nagar Market",
     "Munirka, New Delhi 110067",
   ],
+  postalCode: "110067",
+  addressLocality: "Munirka",
+  addressRegion: "Delhi",
+  addressCountry: "IN",
+  geo: {
+    latitude: 28.5535,
+    longitude: 77.1739,
+  },
   city: "Munirka, New Delhi",
   heroLabel: "CUET coaching in Munirka, New Delhi",
   audience:
     "Students targeting DU, JNU, BHU, central universities, and competitive undergraduate or postgraduate admissions.",
   differentiator:
     "Built around disciplined study systems, admissions clarity, and a content funnel that converts social attention into counseling conversations.",
+  foundingDate: "2022",
+  founder: {
+    name: "Dr Arvind Rao",
+    role: "Founder & Academic Director",
+  },
+  areaServed: [
+    "Munirka",
+    "Vasant Kunj",
+    "JNU",
+    "R K Puram",
+    "Hauz Khas",
+    "Saket",
+    "Ber Sarai",
+    "Moti Bagh",
+    "South Delhi",
+    "Delhi NCR",
+  ],
+  knowsAbout: [
+    "CUET UG preparation",
+    "CUET PG preparation",
+    "General Test preparation",
+    "English language preparation",
+    "Domain subject coaching",
+    "DU admissions guidance",
+    "JNU UG admissions",
+    "BHU admissions",
+    "University counseling",
+  ],
+  // Fill these in once verified. Used by sameAs in JSON-LD; empty entries
+  // are filtered out at schema build time so it is safe to leave blanks.
+  sameAs: [] as string[],
 } as const;
 
 export type Program = {

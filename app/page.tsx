@@ -5,6 +5,7 @@ import { HeroHeadline } from "@/components/hero-headline";
 import { LandingPageAmbient } from "@/components/landing-page-ambient";
 import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
+import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getFeaturedPosts } from "@/lib/posts";
@@ -315,6 +316,10 @@ export default async function HomePage() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="section-shell py-8 md:py-14">
+          <PressStrip />
         </section>
 
         <section id="faq" className="section-shell relative py-8 md:py-14">

@@ -6,9 +6,9 @@ import { Logo } from "@/components/logo";
 const navLinks = [
   { href: "/#programs", label: "Courses" },
   { href: "/cuet-coaching-in-munirka", label: "Locations" },
-  { href: "/hub", label: "Knowledge Hub" },
+  { href: "/faculty", label: "Faculty" },
   { href: "/blog", label: "Blog" },
-  { href: "/#faq", label: "FAQs" },
+  { href: "/about", label: "About" },
 ];
 
 export function SiteHeader() {

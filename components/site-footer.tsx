@@ -8,6 +8,7 @@ const footerLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About UNIMONKS" },
   { href: "/faculty", label: "Faculty" },
+  { href: "/results", label: "Results" },
   { href: "/enroll", label: "Book Counseling" },
   { href: "/hub", label: "Knowledge Hub" },
   { href: "/blog", label: "Blog" },

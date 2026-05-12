@@ -1,0 +1,32 @@
+/*
+ * Admin-only styles. These live in a separate file so the public site's
+ * globals.css stays focused on visitor-facing rendering.
+ */
+
+.admin-shell {
+  background:
+    radial-gradient(circle at top left, rgba(210, 224, 255, 0.45), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 227, 210, 0.32), transparent 24%),
+    linear-gradient(180deg, #f9f6ef 0%, #f5f1e8 100%);
+  color: #1e293b;
+}
+
+.admin-sidebar nav {
+  position: sticky;
+  top: 5.5rem;
+}
+
+@media (max-width: 1023px) {
+  .admin-body {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+  }
+
+  .admin-sidebar nav {
+    position: relative;
+    top: auto;
+  }
+}

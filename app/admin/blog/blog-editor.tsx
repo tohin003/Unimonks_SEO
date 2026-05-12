@@ -6,11 +6,8 @@ import { useState, useTransition } from "react";
 
 import type { Post } from "@/lib/posts";
 
-type AdminDashboardProps = {
+type BlogEditorProps = {
   initialPosts: Post[];
-  authenticated: boolean;
-  protectedMode: boolean;
-  authMode: "db" | "legacy" | "open";
 };
 
 type PostEditorState = {
@@ -72,12 +69,7 @@ function editorStateToPayload(form: PostEditorState) {
   };
 }
 
-export function AdminDashboard({
-  initialPosts,
-  authenticated,
-  protectedMode,
-  authMode,
-}: AdminDashboardProps) {
+export function BlogEditor({ initialPosts }: BlogEditorProps) {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(
@@ -86,8 +78,6 @@ export function AdminDashboard({
   const [form, setForm] = useState<PostEditorState>(
     initialPosts[0] ? postToEditorState(initialPosts[0]) : createEmptyPost(),
   );
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -106,46 +96,6 @@ export function AdminDashboard({
     setForm(createEmptyPost());
     setMessage("Ready to draft a new blog post.");
     setError(null);
-  }
-
-  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setMessage(null);
-    setError(null);
-
-    const payload =
-      authMode === "db" ? { email, password } : { password };
-    const response = await fetch("/api/admin/session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = (await response.json().catch(() => null)) as
-      | { message?: string }
-      | null;
-
-    if (!response.ok) {
-      setError(data?.message ?? "Login failed.");
-      return;
-    }
-
-    setPassword("");
-    setEmail("");
-    startTransition(() => {
-      router.refresh();
-    });
-  }
-
-  async function handleLogout() {
-    setMessage(null);
-    setError(null);
-
-    await fetch("/api/admin/session", { method: "DELETE" });
-    startTransition(() => {
-      router.refresh();
-    });
   }
 
   async function handleSave(event: React.FormEvent<HTMLFormElement>) {
@@ -220,85 +170,15 @@ export function AdminDashboard({
     });
   }
 
-  if (!authenticated) {
-    return (
-      <div className="panel mx-auto max-w-xl p-8 md:p-10">
-        <span className="eyebrow">Admin Login</span>
-        <h2 className="mt-5 font-headline text-4xl leading-tight text-primary">
-          Enter the owner password to manage posts.
-        </h2>
-        <p className="mt-5 text-base leading-8 text-slate-600">
-          This dashboard lets the owner draft, publish, update, and remove blog
-          posts without editing code.
-        </p>
-        <form className="mt-8 space-y-4" onSubmit={handleLogin}>
-          {authMode === "db" ? (
-            <label className="block text-sm font-medium text-slate-700">
-              <span className="mb-2 block">Email</span>
-              <input
-                required
-                type="email"
-                autoComplete="username"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-              />
-            </label>
-          ) : null}
-          <label className="block text-sm font-medium text-slate-700">
-            <span className="mb-2 block">Password</span>
-            <input
-              required
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-            />
-          </label>
-          {error ? (
-            <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </p>
-          ) : null}
-          <button
-            type="submit"
-            disabled={isPending}
-            className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-on-primary transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {isPending ? "Checking..." : "Open admin"}
-          </button>
-        </form>
-      </div>
-    );
-  }
-
   return (
     <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
       <aside className="panel self-start p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <span className="eyebrow">Posts</span>
-            <h2 className="mt-5 font-headline text-3xl leading-tight text-primary">
-              Manage the blog library
-            </h2>
-          </div>
-          {protectedMode ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-primary hover:text-primary"
-            >
-              Logout
-            </button>
-          ) : null}
+        <div>
+          <span className="eyebrow">Posts</span>
+          <h2 className="mt-5 font-headline text-3xl leading-tight text-primary">
+            Manage the blog library
+          </h2>
         </div>
-        {!protectedMode ? (
-          <p className="mt-5 rounded-[22px] bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-900">
-            <code className="font-semibold">ADMIN_PASSWORD</code> is not set, so
-            this admin page is currently open. Protect it before deployment.
-          </p>
-        ) : null}
         <button
           type="button"
           onClick={startNewPost}

@@ -10,6 +10,7 @@ type AdminDashboardProps = {
   initialPosts: Post[];
   authenticated: boolean;
   protectedMode: boolean;
+  authMode: "db" | "legacy" | "open";
 };
 
 type PostEditorState = {
@@ -75,6 +76,7 @@ export function AdminDashboard({
   initialPosts,
   authenticated,
   protectedMode,
+  authMode,
 }: AdminDashboardProps) {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
@@ -84,6 +86,7 @@ export function AdminDashboard({
   const [form, setForm] = useState<PostEditorState>(
     initialPosts[0] ? postToEditorState(initialPosts[0]) : createEmptyPost(),
   );
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -110,12 +113,14 @@ export function AdminDashboard({
     setMessage(null);
     setError(null);
 
+    const payload =
+      authMode === "db" ? { email, password } : { password };
     const response = await fetch("/api/admin/session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify(payload),
     });
     const data = (await response.json().catch(() => null)) as
       | { message?: string }
@@ -127,6 +132,7 @@ export function AdminDashboard({
     }
 
     setPassword("");
+    setEmail("");
     startTransition(() => {
       router.refresh();
     });
@@ -226,11 +232,25 @@ export function AdminDashboard({
           posts without editing code.
         </p>
         <form className="mt-8 space-y-4" onSubmit={handleLogin}>
+          {authMode === "db" ? (
+            <label className="block text-sm font-medium text-slate-700">
+              <span className="mb-2 block">Email</span>
+              <input
+                required
+                type="email"
+                autoComplete="username"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              />
+            </label>
+          ) : null}
           <label className="block text-sm font-medium text-slate-700">
             <span className="mb-2 block">Password</span>
             <input
               required
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"

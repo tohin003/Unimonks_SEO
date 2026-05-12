@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import {
-  ADMIN_SESSION_COOKIE,
-  isAdminProtected,
-  isAdminSessionValue,
-} from "@/lib/admin";
+import { getAdminContext } from "@/lib/auth/current-user";
 import { getPosts } from "@/lib/posts";
 
 import { AdminDashboard } from "./admin-dashboard";
@@ -21,13 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const cookieStore = await cookies();
-  const protectedMode = isAdminProtected();
-  const authenticated = protectedMode
-    ? isAdminSessionValue(
-        cookieStore.get(ADMIN_SESSION_COOKIE)?.value,
-      )
-    : true;
+  const context = await getAdminContext();
+  const authenticated = context.authenticated;
+  const protectedMode = context.mode !== "open";
   const posts = authenticated ? await getPosts({ includeDrafts: true }) : [];
 
   return (
@@ -51,6 +42,7 @@ export default async function AdminPage() {
               initialPosts={posts}
               authenticated={authenticated}
               protectedMode={protectedMode}
+              authMode={context.mode}
             />
           </div>
         </section>

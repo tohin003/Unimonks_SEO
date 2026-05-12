@@ -33,6 +33,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env.local.example
 
 # vercel
 .vercel
@@ -43,3 +44,7 @@ next-env.d.ts
 
 # captured leads
 data/leads.ndjson
+
+# local image uploads (dev-only filesystem fallback for missing R2)
+/public/uploads/*
+!/public/uploads/.gitkeep

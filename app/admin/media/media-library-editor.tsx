@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useId, useRef, useState, useTransition } from "react";
+import { useCallback, useId, useMemo, useRef, useState, useTransition } from "react";
 
 import {
   finalizeUploadAction,
   requestUploadAction,
   softDeleteMediaAction,
+  updateMediaAssetAction,
 } from "@/app/admin/_actions/media";
 import { StatusBanner } from "@/app/admin/_components/status-banner";
 import type { MediaAsset } from "@/lib/content/media";
@@ -34,8 +35,6 @@ function formatBytes(n: number) {
 function readImageDimensions(file: File): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     if (file.type === "image/svg+xml") {
-      // SVGs may not expose dimensions reliably; pick a square as a placeholder
-      // — width/height get overwritten when an admin sets the actual size later.
       resolve({ width: 1000, height: 1000 });
       return;
     }
@@ -66,13 +65,28 @@ export function MediaLibraryEditor({
       : {
           variant: "warning",
           message:
-            "DATABASE_URL is not configured. Uploads are disabled until Neon is provisioned.",
+            "DATABASE_URL is not configured. Uploads and edits are disabled until Neon is provisioned.",
         },
   );
   const [isDragging, setDragging] = useState(false);
   const [isDeleting, startDelete] = useTransition();
+  const [query, setQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const fileInputId = useId();
+
+  const filtered = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return assets;
+    return assets.filter((asset) => {
+      const filename = asset.storageKey.toLowerCase();
+      const alt = asset.altText.toLowerCase();
+      const title = (asset.title ?? "").toLowerCase();
+      return (
+        filename.includes(needle) || alt.includes(needle) || title.includes(needle)
+      );
+    });
+  }, [assets, query]);
 
   const handleFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -164,8 +178,6 @@ export function MediaLibraryEditor({
         }
       }
 
-      // Drop the "done" entries from the visible list after a short delay so
-      // the owner can see the success state without it lingering.
       setTimeout(() => {
         setUploads((prev) => prev.filter((u) => u.progress !== "done"));
       }, 2500);
@@ -186,6 +198,10 @@ export function MediaLibraryEditor({
         setStatus({ variant: "error", message: result.message });
       }
     });
+  }
+
+  function handleAssetUpdate(updated: MediaAsset) {
+    setAssets((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
   }
 
   return (
@@ -256,58 +272,206 @@ export function MediaLibraryEditor({
 
       {status ? <StatusBanner variant={status.variant} message={status.message} /> : null}
 
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <span className="font-headline text-xl text-primary">
+            {assets.length === 0 ? "Library is empty" : `${assets.length} image${assets.length === 1 ? "" : "s"}`}
+          </span>
+          {query.trim() ? (
+            <span className="text-xs uppercase tracking-[0.18em] text-slate-500">
+              {filtered.length} match{filtered.length === 1 ? "" : "es"}
+            </span>
+          ) : null}
+        </div>
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search filename or alt text"
+          className="w-full max-w-xs rounded-full border border-slate-300 bg-white px-4 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none"
+        />
+      </div>
+
       {assets.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-slate-300 bg-white/60 px-6 py-12 text-center text-sm leading-7 text-slate-500">
           No images yet. Drop a few above to get started.
         </p>
+      ) : filtered.length === 0 ? (
+        <p className="rounded-3xl border border-dashed border-slate-300 bg-white/60 px-6 py-10 text-center text-sm leading-7 text-slate-500">
+          No images match &ldquo;{query}&rdquo;.
+        </p>
       ) : (
-        <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {assets.map((asset) => {
-            const filename = asset.storageKey.split("/").pop() ?? asset.storageKey;
-            return (
-              <li
-                key={asset.id}
-                className="panel flex flex-col gap-3 overflow-hidden p-3"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={asset.publicUrl}
-                    alt={asset.altText || filename}
-                    width={asset.width}
-                    height={asset.height}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 space-y-1 text-xs leading-5 text-slate-600">
-                  <p className="truncate font-mono text-[11px] text-slate-500" title={asset.storageKey}>
-                    {filename}
-                  </p>
-                  <p>
-                    {asset.width}×{asset.height} ·{" "}
-                    {formatBytes(asset.fileSize)} ·{" "}
-                    <span className="font-mono uppercase">
-                      {asset.mimeType.split("/").pop()}
-                    </span>
-                  </p>
-                  <p className="truncate text-slate-400">
-                    {asset.altText ? `Alt: ${asset.altText}` : "No alt text yet."}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(asset.id)}
-                  disabled={isDeleting}
-                  className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors hover:border-rose-400 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Hide
-                </button>
-              </li>
-            );
-          })}
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((asset) => (
+            <MediaTile
+              key={asset.id}
+              asset={asset}
+              expanded={expandedId === asset.id}
+              onToggleExpanded={() =>
+                setExpandedId((prev) => (prev === asset.id ? null : asset.id))
+              }
+              onDelete={() => handleDelete(asset.id)}
+              onUpdated={handleAssetUpdate}
+              dbConfigured={dbConfigured}
+              isDeleting={isDeleting}
+            />
+          ))}
         </ul>
       )}
     </div>
+  );
+}
+
+type MediaTileProps = {
+  asset: MediaAsset;
+  expanded: boolean;
+  onToggleExpanded: () => void;
+  onDelete: () => void;
+  onUpdated: (asset: MediaAsset) => void;
+  dbConfigured: boolean;
+  isDeleting: boolean;
+};
+
+function MediaTile({
+  asset,
+  expanded,
+  onToggleExpanded,
+  onDelete,
+  onUpdated,
+  dbConfigured,
+  isDeleting,
+}: MediaTileProps) {
+  const [altText, setAltText] = useState(asset.altText);
+  const [title, setTitle] = useState(asset.title ?? "");
+  const [caption, setCaption] = useState(asset.caption ?? "");
+  const [tileStatus, setTileStatus] = useState<Status | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const dirty =
+    altText !== asset.altText ||
+    title !== (asset.title ?? "") ||
+    caption !== (asset.caption ?? "");
+
+  const filename = asset.storageKey.split("/").pop() ?? asset.storageKey;
+
+  function handleSave() {
+    setTileStatus(null);
+    startTransition(async () => {
+      const result = await updateMediaAssetAction(asset.id, {
+        altText,
+        title: title.trim() ? title : null,
+        caption: caption.trim() ? caption : null,
+      });
+      if (result.ok) {
+        onUpdated({
+          ...asset,
+          altText,
+          title: title.trim() ? title : null,
+          caption: caption.trim() ? caption : null,
+          updatedAt: new Date(),
+        });
+        setTileStatus({ variant: "success", message: result.message ?? "Saved." });
+      } else {
+        setTileStatus({ variant: "error", message: result.message });
+      }
+    });
+  }
+
+  return (
+    <li className="panel flex flex-col gap-3 overflow-hidden p-3">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={asset.publicUrl}
+          alt={asset.altText || filename}
+          width={asset.width}
+          height={asset.height}
+          loading="lazy"
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className="flex-1 space-y-2 text-xs leading-5 text-slate-600">
+        <p className="truncate font-mono text-[11px] text-slate-500" title={asset.storageKey}>
+          {filename}
+        </p>
+        <p>
+          {asset.width}×{asset.height} ·{" "}
+          {formatBytes(asset.fileSize)} ·{" "}
+          <span className="font-mono uppercase">{asset.mimeType.split("/").pop()}</span>
+        </p>
+        <label className="block">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+            Alt text
+          </span>
+          <textarea
+            value={altText}
+            onChange={(event) => setAltText(event.target.value)}
+            rows={2}
+            disabled={!dbConfigured || isPending}
+            placeholder="Describe the image for screen readers and SEO."
+            className="mt-1 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm leading-6 focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+          />
+        </label>
+        {expanded ? (
+          <>
+            <label className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Title (optional)
+              </span>
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                disabled={!dbConfigured || isPending}
+                placeholder="Short label used in image sitemap entries."
+                className="mt-1 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              />
+            </label>
+            <label className="block">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Caption (optional)
+              </span>
+              <textarea
+                value={caption}
+                onChange={(event) => setCaption(event.target.value)}
+                rows={2}
+                disabled={!dbConfigured || isPending}
+                placeholder="Caption rendered below the image where supported."
+                className="mt-1 w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm leading-6 focus:border-primary focus:ring-2 focus:ring-primary/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              />
+            </label>
+          </>
+        ) : null}
+        {tileStatus ? (
+          <StatusBanner variant={tileStatus.variant} message={tileStatus.message} />
+        ) : null}
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={onToggleExpanded}
+          className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 hover:text-primary"
+        >
+          {expanded ? "Less" : "More details"}
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={isDeleting || isPending}
+            className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 transition-colors hover:border-rose-400 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Hide
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!dbConfigured || !dirty || isPending}
+            className="rounded-full bg-primary px-4 py-1 text-xs font-semibold text-on-primary transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+          >
+            {isPending ? "Saving…" : dirty ? "Save" : "Saved"}
+          </button>
+        </div>
+      </div>
+    </li>
   );
 }

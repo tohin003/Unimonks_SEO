@@ -169,6 +169,84 @@ export async function finalizeUploadAction(
   }
 }
 
+const UpdateMediaAssetSchema = z.object({
+  altText: z.string().max(280),
+  title: z.string().max(160).optional().nullable(),
+  caption: z.string().max(500).optional().nullable(),
+});
+
+export type UpdateMediaAssetInput = z.infer<typeof UpdateMediaAssetSchema>;
+
+export async function updateMediaAssetAction(
+  id: string,
+  input: UpdateMediaAssetInput,
+): Promise<ActionResult> {
+  const ctx = await getAdminContext();
+  if (!ctx.authenticated) return notAuthenticated();
+  const db = getDb();
+  if (!db) return dbNotConfigured();
+
+  if (!id || typeof id !== "string") {
+    return { ok: false, message: "Asset id is required." };
+  }
+
+  const parsed = UpdateMediaAssetSchema.safeParse(input);
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      fieldErrors[issue.path.join(".")] = issue.message;
+    }
+    return { ok: false, message: "Some fields are invalid.", fieldErrors };
+  }
+
+  try {
+    const before = await db
+      .select({
+        altText: mediaAssets.altText,
+        title: mediaAssets.title,
+        caption: mediaAssets.caption,
+      })
+      .from(mediaAssets)
+      .where(eq(mediaAssets.id, id))
+      .limit(1);
+
+    if (before.length === 0) {
+      return { ok: false, message: "Asset not found." };
+    }
+
+    const updated = await db
+      .update(mediaAssets)
+      .set({
+        altText: parsed.data.altText,
+        title: parsed.data.title ?? null,
+        caption: parsed.data.caption ?? null,
+        updatedAt: new Date(),
+      })
+      .where(eq(mediaAssets.id, id))
+      .returning({ id: mediaAssets.id });
+
+    if (updated.length === 0) {
+      return { ok: false, message: "Asset not found." };
+    }
+
+    await recordAudit({
+      user: ctx.user,
+      action: "update",
+      entityType: "media_asset",
+      entityId: id,
+      before: before[0],
+      after: parsed.data,
+    });
+
+    revalidatePath("/admin/media");
+
+    return { ok: true, message: "Asset details saved." };
+  } catch (error) {
+    console.error("[admin] updateMediaAssetAction failed", error);
+    return { ok: false, message: "Could not save asset." };
+  }
+}
+
 export async function softDeleteMediaAction(id: string): Promise<ActionResult> {
   const ctx = await getAdminContext();
   if (!ctx.authenticated) return notAuthenticated();

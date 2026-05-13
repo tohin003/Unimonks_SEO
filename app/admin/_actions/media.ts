@@ -113,7 +113,11 @@ export async function requestUploadAction(
     };
   } catch (error) {
     console.error("[admin] requestUploadAction failed", error);
-    return { ok: false, message: "Could not prepare upload." };
+    const message =
+      error instanceof Error && error.message.startsWith("Storage is not configured")
+        ? error.message
+        : "Could not prepare upload.";
+    return { ok: false, message };
   }
 }
 

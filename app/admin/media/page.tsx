@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
+import { StatusBanner } from "@/app/admin/_components/status-banner";
 import { listMediaAssets } from "@/lib/content/media";
 import { isDbConfigured } from "@/lib/db/client";
-import { isProductionStorage } from "@/lib/storage";
+import { isProductionStorage, isStorageWritable } from "@/lib/storage";
 
 import { MediaLibraryEditor } from "./media-library-editor";
 
@@ -12,6 +13,7 @@ export default async function AdminMediaPage() {
   const assets = await listMediaAssets();
   const driver = isProductionStorage() ? "r2" : "local";
   const dbConfigured = isDbConfigured();
+  const writable = isStorageWritable();
 
   return (
     <div className="space-y-6">
@@ -24,11 +26,19 @@ export default async function AdminMediaPage() {
           Images uploaded here can be attached to the showcase, blog posts,
           faculty portraits, and any page hero. Storage driver:{" "}
           <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-xs text-slate-700">
-            {driver === "r2" ? "Cloudflare R2" : "Local filesystem"}
+            {driver === "r2" ? "Cloudflare R2" : writable ? "Local filesystem" : "Disabled"}
           </span>
           .
         </p>
       </header>
+
+      {!writable ? (
+        <StatusBanner
+          variant="warning"
+          message="Cloudflare R2 is not configured. Uploads are disabled in production until R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_BASE_URL are set on the Vercel project. The library still lists previously uploaded assets so you can plan against them."
+        />
+      ) : null}
+
       <MediaLibraryEditor
         initialAssets={assets}
         driver={driver}

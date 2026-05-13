@@ -1,44 +1,39 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
+import { listMediaAssets } from "@/lib/content/media";
+import { isDbConfigured } from "@/lib/db/client";
 import { isProductionStorage } from "@/lib/storage";
+
+import { MediaLibraryEditor } from "./media-library-editor";
 
 export const metadata: Metadata = { title: "Media library" };
 
-export default function AdminMediaPage() {
-  const driver = isProductionStorage() ? "Cloudflare R2" : "Local filesystem";
+export default async function AdminMediaPage() {
+  const assets = await listMediaAssets();
+  const driver = isProductionStorage() ? "r2" : "local";
+  const dbConfigured = isDbConfigured();
 
   return (
-    <SectionPlaceholder
-      eyebrow="Content · Media"
-      title="Upload and manage every image on the site."
-      description={`Current storage driver: ${driver}. Images uploaded here can be attached to the showcase, blog posts, faculty portraits, and any page hero.`}
-      fields={[
-        {
-          name: "Drag-drop upload",
-          description: "Multiple files at once. Presigned PUT when in R2 mode.",
-        },
-        {
-          name: "Alt text editor",
-          description: "Per-asset accessible label (SEO-critical).",
-        },
-        {
-          name: "Title + caption",
-          description: "Optional metadata used for image:image sitemap entries.",
-        },
-        {
-          name: "Usage backlinks",
-          description: "See which pages, posts, and slides reference each image.",
-        },
-        {
-          name: "Soft delete",
-          description: "Hide unused assets; existing references stay alive.",
-        },
-        {
-          name: "Filter",
-          description: "By usage scope (unused, blog, showcase, faculty, hero).",
-        },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Content · Media</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Upload and manage every image on the site.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Images uploaded here can be attached to the showcase, blog posts,
+          faculty portraits, and any page hero. Storage driver:{" "}
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-xs text-slate-700">
+            {driver === "r2" ? "Cloudflare R2" : "Local filesystem"}
+          </span>
+          .
+        </p>
+      </header>
+      <MediaLibraryEditor
+        initialAssets={assets}
+        driver={driver}
+        dbConfigured={dbConfigured}
+      />
+    </div>
   );
 }

@@ -1,42 +1,44 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
+import { listShowcaseSlides } from "@/lib/content/showcase";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { ShowcaseEditor, type ShowcaseSlideForm } from "./showcase-editor";
 
 export const metadata: Metadata = { title: "Image showcase" };
 
-export default function AdminShowcasePage() {
+export default async function AdminShowcasePage() {
+  const slides = await listShowcaseSlides();
+
+  const initial: ShowcaseSlideForm[] = slides.map((slide) => ({
+    assetId: slide.assetId,
+    publicUrl: slide.publicUrl,
+    alt: slide.alt,
+    width: slide.width,
+    height: slide.height,
+    headline: slide.headline,
+    subhead: slide.subhead ?? "",
+    linkUrl: slide.linkUrl ?? "",
+    enabled: slide.enabled,
+  }));
+
   return (
-    <SectionPlaceholder
-      eyebrow="Content · Image showcase"
-      title="Curate the sliding image cards on the home page."
-      description="A horizontal carousel of brand insights — each card pairs an image with a short headline and optional subhead/link. Re-orderable, enable/disable per slide."
-      livePath="/"
-      fields={[
-        {
-          name: "Slide image",
-          description: "4:5 portrait or 3:4 — chosen at slide level.",
-        },
-        {
-          name: "Headline overlay",
-          description: "Short copy rendered over the image bottom 38%.",
-        },
-        {
-          name: "Optional subhead",
-          description: "One line of supporting context.",
-        },
-        {
-          name: "Optional link URL",
-          description: "Where the card sends visitors when clicked.",
-        },
-        {
-          name: "Enable / disable",
-          description: "Soft-hide a slide without deleting it.",
-        },
-        {
-          name: "Order",
-          description: "Drag-and-drop reorder; saved instantly.",
-        },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Content · Image showcase</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Curate the sliding image cards on the home page.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Each card pairs an image with a short headline and an optional
+          subhead and link. Reorder with the arrow buttons; disable a slide
+          to hide it from the live site without losing the content.
+        </p>
+      </header>
+      <ShowcaseEditor
+        initialSlides={initial}
+        dbConfigured={isDbConfigured()}
+      />
+    </div>
   );
 }

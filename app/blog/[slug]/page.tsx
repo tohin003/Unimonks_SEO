@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -32,6 +33,17 @@ export async function generateMetadata({
     return {};
   }
 
+  const ogImage = post.coverImage
+    ? {
+        url: post.coverImage.publicUrl.startsWith("http")
+          ? post.coverImage.publicUrl
+          : absoluteUrl(post.coverImage.publicUrl),
+        width: post.coverImage.width,
+        height: post.coverImage.height,
+        alt: post.coverImage.alt || post.title,
+      }
+    : undefined;
+
   return {
     title: post.title,
     description: post.description,
@@ -46,6 +58,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.date,
       section: post.category,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }
@@ -59,6 +72,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   const relatedPosts = await getRelatedPosts(post.slug);
+  const coverImageUrl = post.coverImage
+    ? post.coverImage.publicUrl.startsWith("http")
+      ? post.coverImage.publicUrl
+      : absoluteUrl(post.coverImage.publicUrl)
+    : null;
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -69,6 +87,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     articleSection: post.category,
     keywords: [post.seoQuery, post.category],
     mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
+    image: coverImageUrl ? [coverImageUrl] : undefined,
     author: {
       "@type": "Organization",
       name: siteConfig.name,
@@ -113,6 +132,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <span>{post.readingTime}</span>
                 <span>{post.seoQuery}</span>
               </div>
+              {post.coverImage ? (
+                <figure className="mt-8 overflow-hidden rounded-[28px] bg-slate-100 ring-1 ring-slate-200/80">
+                  <div className="relative aspect-[21/9]">
+                    <Image
+                      src={post.coverImage.publicUrl}
+                      alt={post.coverImage.alt || post.title}
+                      width={post.coverImage.width}
+                      height={post.coverImage.height}
+                      sizes="(max-width: 1024px) 92vw, 760px"
+                      priority
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </figure>
+              ) : null}
               <div className="mt-8 rounded-[28px] bg-[#eef4ff] p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
                   Quick answer

@@ -1,34 +1,53 @@
 import { and, desc, eq } from "drizzle-orm";
 
 import { getDb } from "@/lib/db/client";
-import { blogPosts as blogPostsTable } from "@/lib/db/schema";
+import {
+  blogPosts as blogPostsTable,
+  mediaAssets,
+} from "@/lib/db/schema";
 import {
   getFeaturedPosts as getFeaturedPostsFallback,
   getPostBySlug as getPostBySlugFallback,
   getPosts as getPostsFallback,
   getRelatedPosts as getRelatedPostsFallback,
   toPost,
+  type CoverImage,
   type Post,
   type PostRecord,
 } from "@/lib/posts";
 
-type DbBlogRow = typeof blogPostsTable.$inferSelect;
+type JoinedBlogRow = {
+  post: typeof blogPostsTable.$inferSelect;
+  cover: typeof mediaAssets.$inferSelect | null;
+};
 
-function rowToRecord(row: DbBlogRow): PostRecord {
+function rowToRecord({ post, cover }: JoinedBlogRow): PostRecord {
+  const coverImage: CoverImage | null =
+    cover && cover.deletedAt === null && post.coverImageAssetId
+      ? {
+          assetId: cover.id,
+          publicUrl: cover.publicUrl,
+          alt: cover.altText ?? "",
+          width: cover.width,
+          height: cover.height,
+        }
+      : null;
+
   return {
-    slug: row.slug,
-    title: row.title,
-    description: row.description,
-    excerpt: row.excerpt,
-    category: row.category,
-    date: row.date,
-    readingTime: row.readingTime,
-    seoQuery: row.seoQuery,
-    quickAnswer: row.quickAnswer,
-    takeaways: row.takeaways ?? [],
-    body: row.body,
-    published: row.published,
-    updatedAt: row.updatedAt ? row.updatedAt.toISOString() : undefined,
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    excerpt: post.excerpt,
+    category: post.category,
+    date: post.date,
+    readingTime: post.readingTime,
+    seoQuery: post.seoQuery,
+    quickAnswer: post.quickAnswer,
+    takeaways: post.takeaways ?? [],
+    body: post.body,
+    published: post.published,
+    updatedAt: post.updatedAt ? post.updatedAt.toISOString() : undefined,
+    coverImage,
   };
 }
 
@@ -46,8 +65,9 @@ export async function getPosts(options?: {
 
   try {
     const rows = await db
-      .select()
+      .select({ post: blogPostsTable, cover: mediaAssets })
       .from(blogPostsTable)
+      .leftJoin(mediaAssets, eq(blogPostsTable.coverImageAssetId, mediaAssets.id))
       .orderBy(desc(blogPostsTable.updatedAt));
 
     if (rows.length === 0) return getPostsFallback(options);
@@ -81,8 +101,9 @@ export async function getPostBySlug(
 
   try {
     const rows = await db
-      .select()
+      .select({ post: blogPostsTable, cover: mediaAssets })
       .from(blogPostsTable)
+      .leftJoin(mediaAssets, eq(blogPostsTable.coverImageAssetId, mediaAssets.id))
       .where(
         options?.includeDrafts
           ? eq(blogPostsTable.slug, slug)

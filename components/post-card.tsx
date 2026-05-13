@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import type { Post } from "@/lib/posts";
@@ -15,6 +16,20 @@ export function PostCard({ post, featured = false }: PostCardProps) {
         featured ? "md:p-9" : ""
       }`}
     >
+      {post.coverImage ? (
+        <div className="-mx-2 mb-5 overflow-hidden rounded-[20px] bg-slate-100">
+          <div className="relative aspect-[21/9]">
+            <Image
+              src={post.coverImage.publicUrl}
+              alt={post.coverImage.alt || post.title}
+              width={post.coverImage.width}
+              height={post.coverImage.height}
+              sizes={featured ? "(max-width: 1024px) 92vw, 720px" : "(max-width: 1024px) 92vw, 360px"}
+              className="h-full w-full object-cover transition duration-500 group-hover:saturate-110"
+            />
+          </div>
+        </div>
+      ) : null}
       <div className="mb-5 flex items-center justify-between gap-4">
         <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-600">
           {post.category}

@@ -6,12 +6,16 @@ import { z } from "zod";
 
 import { getAdminContext } from "@/lib/auth/current-user";
 import { getDb } from "@/lib/db/client";
-import { blogPosts as blogPostsTable } from "@/lib/db/schema";
+import {
+  blogPosts as blogPostsTable,
+  mediaAssets,
+} from "@/lib/db/schema";
 import {
   deletePost as deletePostFallback,
   savePost as savePostFallback,
   slugify,
   toPost,
+  type CoverImage,
   type Post,
 } from "@/lib/posts";
 
@@ -30,6 +34,11 @@ export const BlogPostInputSchema = z.object({
   takeaways: z.array(z.string().min(1).max(500)).max(20),
   body: z.string().min(1).max(50000),
   published: z.boolean(),
+  coverImageAssetId: z
+    .string()
+    .uuid("Cover image must reference a valid asset")
+    .nullable()
+    .optional(),
 });
 
 export type BlogPostInput = z.infer<typeof BlogPostInputSchema>;
@@ -45,23 +54,40 @@ export type DeletePostResult =
 async function readAllPosts(): Promise<Post[]> {
   const db = getDb();
   if (!db) return [];
-  const rows = await db.select().from(blogPostsTable);
+  const rows = await db
+    .select({ post: blogPostsTable, cover: mediaAssets })
+    .from(blogPostsTable)
+    .leftJoin(mediaAssets, eq(blogPostsTable.coverImageAssetId, mediaAssets.id));
+
   return rows
-    .map((row) => ({
-      slug: row.slug,
-      title: row.title,
-      description: row.description,
-      excerpt: row.excerpt,
-      category: row.category,
-      date: row.date,
-      readingTime: row.readingTime,
-      seoQuery: row.seoQuery,
-      quickAnswer: row.quickAnswer,
-      takeaways: row.takeaways ?? [],
-      body: row.body,
-      published: row.published,
-      updatedAt: row.updatedAt?.toISOString(),
-    }))
+    .map(({ post: row, cover }) => {
+      const coverImage: CoverImage | null =
+        cover && cover.deletedAt === null && row.coverImageAssetId
+          ? {
+              assetId: cover.id,
+              publicUrl: cover.publicUrl,
+              alt: cover.altText ?? "",
+              width: cover.width,
+              height: cover.height,
+            }
+          : null;
+      return {
+        slug: row.slug,
+        title: row.title,
+        description: row.description,
+        excerpt: row.excerpt,
+        category: row.category,
+        date: row.date,
+        readingTime: row.readingTime,
+        seoQuery: row.seoQuery,
+        quickAnswer: row.quickAnswer,
+        takeaways: row.takeaways ?? [],
+        body: row.body,
+        published: row.published,
+        updatedAt: row.updatedAt?.toISOString(),
+        coverImage,
+      };
+    })
     .map(toPost)
     .sort((a, b) =>
       (b.updatedAt ?? b.date).localeCompare(a.updatedAt ?? a.date),
@@ -153,6 +179,7 @@ export async function savePostAction(
       takeaways: parsed.data.takeaways,
       body: parsed.data.body,
       published: parsed.data.published,
+      coverImageAssetId: parsed.data.coverImageAssetId ?? null,
       updatedAt: new Date(),
     };
 

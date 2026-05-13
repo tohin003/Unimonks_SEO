@@ -7,6 +7,14 @@ export type PostSection = {
   bullets?: string[];
 };
 
+export type CoverImage = {
+  assetId: string;
+  publicUrl: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
 export type PostRecord = {
   slug: string;
   title: string;
@@ -21,6 +29,7 @@ export type PostRecord = {
   body: string;
   published: boolean;
   updatedAt?: string;
+  coverImage?: CoverImage | null;
 };
 
 export type Post = PostRecord & {

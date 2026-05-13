@@ -8,6 +8,10 @@ import {
   deletePostAction,
   savePostAction,
 } from "@/app/admin/_actions/blog";
+import {
+  ImagePicker,
+  type PickedAsset,
+} from "@/app/admin/_components/inputs/image-picker";
 import type { Post } from "@/lib/posts";
 
 type BlogEditorProps = {
@@ -27,6 +31,7 @@ type PostEditorState = {
   takeaways: string;
   body: string;
   published: boolean;
+  coverImage: PickedAsset | null;
 };
 
 function createEmptyPost(): PostEditorState {
@@ -43,6 +48,7 @@ function createEmptyPost(): PostEditorState {
     takeaways: "",
     body: "## Overview\nWrite a clear introduction for students and parents.\n\n## What students should know\nAdd practical guidance in short paragraphs.\n\n- Use bullet points for quick steps\n- Keep advice specific and readable\n\n## What to do next\nEnd with the next action a student should take.",
     published: true,
+    coverImage: null,
   };
 }
 
@@ -60,16 +66,27 @@ function postToEditorState(post: Post): PostEditorState {
     takeaways: post.takeaways.join("\n"),
     body: post.body,
     published: post.published,
+    coverImage: post.coverImage
+      ? {
+          assetId: post.coverImage.assetId,
+          publicUrl: post.coverImage.publicUrl,
+          alt: post.coverImage.alt,
+          width: post.coverImage.width,
+          height: post.coverImage.height,
+        }
+      : null,
   };
 }
 
 function editorStateToPayload(form: PostEditorState) {
+  const { coverImage, ...rest } = form;
   return {
-    ...form,
-    takeaways: form.takeaways
+    ...rest,
+    takeaways: rest.takeaways
       .split("\n")
       .map((item) => item.trim())
       .filter(Boolean),
+    coverImageAssetId: coverImage?.assetId ?? null,
   };
 }
 
@@ -314,6 +331,17 @@ export function BlogEditor({ initialPosts }: BlogEditorProps) {
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             />
           </label>
+
+          <ImagePicker
+            label="Cover image (optional)"
+            uploadScope="blog"
+            previewAspect="21 / 9"
+            helpText="Renders above the article body. 21:9 cinema crop. Recommended ≥ 1600 × 686."
+            value={form.coverImage}
+            onChange={(coverImage) =>
+              setForm((current) => ({ ...current, coverImage }))
+            }
+          />
 
           <label className="block text-sm font-medium text-slate-700">
             <span className="mb-2 block">Meta description</span>

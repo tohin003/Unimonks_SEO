@@ -33,7 +33,16 @@ export type AdminContext = {
  */
 export async function getAdminContext(): Promise<AdminContext> {
   if (isDbConfigured()) {
-    const user = await readSessionFromCookies();
+    let user: SessionUser | null = null;
+    try {
+      user = await readSessionFromCookies();
+    } catch (error) {
+      // readSessionFromCookies already swallows DB errors, but belt-and-
+      // braces: a thrown cookies()/runtime error here must not crash any
+      // page that wraps content in <Editable> or otherwise calls
+      // getAdminContext from a server component.
+      console.error("[auth] readSessionFromCookies threw", error);
+    }
     if (user) {
       return { authenticated: true, user, mode: "db" };
     }
@@ -46,6 +55,13 @@ export async function getAdminContext(): Promise<AdminContext> {
     const legacyCookie = store.get(ADMIN_SESSION_COOKIE)?.value;
     const ok = isAdminSessionValue(legacyCookie);
     return { authenticated: ok, user: null, mode: "legacy" };
+  }
+
+  // In production DBs are configured but no session matched: treat as
+  // unauthenticated rather than open. "Open mode" stays a dev-only
+  // convenience to avoid silently exposing admin tooling.
+  if (isDbConfigured() || process.env.VERCEL) {
+    return { authenticated: false, user: null, mode: "db" };
   }
 
   return { authenticated: true, user: null, mode: "open" };

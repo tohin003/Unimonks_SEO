@@ -56,29 +56,38 @@ export async function getSessionUser(token: string | undefined): Promise<Session
   if (!db) return null;
   const tokenHash = hashToken(token);
 
-  const rows = await db
-    .select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      role: users.role,
-      expiresAt: sessions.expiresAt,
-    })
-    .from(sessions)
-    .innerJoin(users, eq(users.id, sessions.userId))
-    .where(eq(sessions.tokenHash, tokenHash))
-    .limit(1);
+  try {
+    const rows = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        role: users.role,
+        expiresAt: sessions.expiresAt,
+      })
+      .from(sessions)
+      .innerJoin(users, eq(users.id, sessions.userId))
+      .where(eq(sessions.tokenHash, tokenHash))
+      .limit(1);
 
-  const row = rows[0];
-  if (!row) return null;
-  if (row.expiresAt.getTime() < Date.now()) return null;
+    const row = rows[0];
+    if (!row) return null;
+    if (row.expiresAt.getTime() < Date.now()) return null;
 
-  return {
-    id: row.id,
-    email: row.email,
-    name: row.name,
-    role: row.role === "owner" ? "owner" : "editor",
-  };
+    return {
+      id: row.id,
+      email: row.email,
+      name: row.name,
+      role: row.role === "owner" ? "owner" : "editor",
+    };
+  } catch (error) {
+    // Auth lookups must never crash a page render. Treat any DB blip
+    // (cold start, connection reset, transient Neon failure) as "no
+    // session" so public routes stay up even when auth lookup is
+    // briefly unhealthy.
+    console.error("[auth] getSessionUser failed", error);
+    return null;
+  }
 }
 
 export async function readSessionFromCookies(): Promise<SessionUser | null> {

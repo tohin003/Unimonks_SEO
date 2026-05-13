@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
 import { EditModeRibbon } from "@/components/edit-mode-ribbon";
+import { EditModeRibbonGate } from "@/components/edit-mode-ribbon-gate";
 import { getSiteSettings } from "@/lib/content/site";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
 import {
@@ -101,7 +102,9 @@ export default async function RootLayout({
           }}
         />
         {children}
-        <EditModeRibbon />
+        <EditModeRibbonGate>
+          <EditModeRibbon />
+        </EditModeRibbonGate>
       </body>
     </html>
   );

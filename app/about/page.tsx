@@ -4,7 +4,7 @@ import Link from "next/link";
 import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { featuredFaculty } from "@/lib/faculty";
+import { getFeaturedFaculty } from "@/lib/content/faculty";
 import { buildBreadcrumbSchema, ORG_ID } from "@/lib/schemas";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
 
@@ -42,9 +42,12 @@ const aboutPageSchema = {
   mainEntity: { "@id": ORG_ID },
 };
 
-const founder = featuredFaculty.find((member) => member.slug === "arvind-rao");
+export default async function AboutPage() {
+  const featuredFaculty = await getFeaturedFaculty();
+  const founder =
+    featuredFaculty.find((member) => member.slug === "arvind-rao") ??
+    featuredFaculty[0];
 
-export default function AboutPage() {
   return (
     <>
       <script

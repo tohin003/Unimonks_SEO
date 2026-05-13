@@ -4,10 +4,12 @@ import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import {
+  getFacultyClusters,
+  getFeaturedFaculty,
+} from "@/lib/content/faculty";
+import {
   buildFacultyPageMetadata,
   buildFacultyPersonSchemas,
-  facultyClusters,
-  featuredFaculty,
 } from "@/lib/faculty";
 import { buildBreadcrumbSchema } from "@/lib/schemas";
 import { jsonLdString, siteConfig } from "@/lib/site";
@@ -19,8 +21,15 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   { name: "Faculty", url: `${siteConfig.siteUrl}/faculty` },
 ]);
 
-export default function FacultyPage() {
-  const schemas = [breadcrumbSchema, ...buildFacultyPersonSchemas()];
+export default async function FacultyPage() {
+  const [featuredFaculty, facultyClusters] = await Promise.all([
+    getFeaturedFaculty(),
+    getFacultyClusters(),
+  ]);
+  const schemas = [
+    breadcrumbSchema,
+    ...buildFacultyPersonSchemas(featuredFaculty),
+  ];
 
   return (
     <>

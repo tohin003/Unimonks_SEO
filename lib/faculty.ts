@@ -115,8 +115,10 @@ export function buildFacultyPageMetadata(): Metadata {
   };
 }
 
-export function buildFacultyPersonSchemas() {
-  return featuredFaculty.map((member) => ({
+export function buildFacultyPersonSchemas(
+  members: FacultyMember[] = featuredFaculty,
+) {
+  return members.map((member) => ({
     "@context": "https://schema.org",
     "@type": "Person",
     name: member.honorific ? `${member.honorific} ${member.name}` : member.name,

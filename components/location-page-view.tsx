@@ -4,12 +4,9 @@ import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getLocationBySlug } from "@/lib/content/locations";
 import { getPrograms } from "@/lib/content/programs";
-import {
-  getLocationBySlug,
-  getOtherLocations,
-  type Location,
-} from "@/lib/locations";
+import { getOtherLocations, type Location } from "@/lib/locations";
 import { getFeaturedPosts } from "@/lib/posts";
 import {
   buildBreadcrumbSchema,
@@ -23,7 +20,7 @@ type LocationPageViewProps = {
 };
 
 export async function LocationPageView({ slug }: LocationPageViewProps) {
-  const location = getLocationBySlug(slug);
+  const location = await getLocationBySlug(slug);
   if (!location) {
     throw new Error(`Unknown location slug: ${slug}`);
   }

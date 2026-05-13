@@ -72,9 +72,16 @@ export async function getPosts(options?: {
 
     if (rows.length === 0) return getPostsFallback(options);
 
+    const now = Date.now();
     const records = rows
+      .filter(
+        ({ post }) =>
+          options?.includeDrafts ||
+          (post.published &&
+            (!post.scheduledPublishAt ||
+              post.scheduledPublishAt.getTime() <= now)),
+      )
       .map(rowToRecord)
-      .filter((post) => options?.includeDrafts || post.published)
       .sort(sortByUpdatedDesc);
 
     return records.map(toPost);
@@ -115,6 +122,15 @@ export async function getPostBySlug(
       .limit(1);
     const row = rows[0];
     if (!row) return getPostBySlugFallback(slug, options);
+
+    if (
+      !options?.includeDrafts &&
+      row.post.scheduledPublishAt &&
+      row.post.scheduledPublishAt.getTime() > Date.now()
+    ) {
+      // Scheduled for future — still hidden from public.
+      return undefined;
+    }
 
     return toPost(rowToRecord(row));
   } catch (error) {

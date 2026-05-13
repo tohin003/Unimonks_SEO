@@ -69,6 +69,13 @@ export default async function AdminLayout({
         { href: "/admin/settings/faqs", label: "FAQs" },
       ],
     },
+    {
+      heading: "Account",
+      items: [
+        { href: "/admin/account/users", label: "Users" },
+        { href: "/admin/audit", label: "Audit log" },
+      ],
+    },
   ];
 
   if (!context.authenticated) {

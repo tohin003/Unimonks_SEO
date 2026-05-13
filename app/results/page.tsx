@@ -3,10 +3,10 @@ import Link from "next/link";
 import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getOutcomeGroups } from "@/lib/content/results";
 import {
   buildResultsItemListSchema,
   buildResultsPageMetadata,
-  outcomeGroups,
 } from "@/lib/results";
 import { buildBreadcrumbSchema } from "@/lib/schemas";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
@@ -18,12 +18,13 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   { name: "Results", url: absoluteUrl("/results") },
 ]);
 
-const totalOutcomes = outcomeGroups.reduce(
-  (sum, group) => sum + group.outcomes.length,
-  0,
-);
+export default async function ResultsPage() {
+  const outcomeGroups = await getOutcomeGroups();
+  const totalOutcomes = outcomeGroups.reduce(
+    (sum, group) => sum + group.outcomes.length,
+    0,
+  );
 
-export default function ResultsPage() {
   return (
     <>
       <script
@@ -31,7 +32,7 @@ export default function ResultsPage() {
         dangerouslySetInnerHTML={{
           __html: jsonLdString([
             breadcrumbSchema,
-            buildResultsItemListSchema(),
+            buildResultsItemListSchema(outcomeGroups),
           ]),
         }}
       />

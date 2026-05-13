@@ -149,8 +149,10 @@ export function buildResultsPageMetadata(): Metadata {
   };
 }
 
-export function buildResultsItemListSchema() {
-  const allOutcomes = outcomeGroups.flatMap((group) => group.outcomes);
+export function buildResultsItemListSchema(
+  groups: OutcomeGroup[] = outcomeGroups,
+) {
+  const allOutcomes = groups.flatMap((group) => group.outcomes);
 
   return {
     "@context": "https://schema.org",

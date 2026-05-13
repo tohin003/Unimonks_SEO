@@ -2,12 +2,20 @@ type Props = {
   eyebrow: string;
   title: string;
   description?: string;
+  /** Optional id used by the admin focus scroller to deep-link into this panel. */
+  id?: string;
   children: React.ReactNode;
 };
 
-export function AdminPanel({ eyebrow, title, description, children }: Props) {
+export function AdminPanel({
+  eyebrow,
+  title,
+  description,
+  id,
+  children,
+}: Props) {
   return (
-    <section className="panel space-y-5 p-6 md:p-7">
+    <section id={id} className="panel space-y-5 p-6 md:p-7">
       <header>
         <span className="eyebrow">{eyebrow}</span>
         <h2 className="mt-3 font-headline text-2xl leading-tight text-primary md:text-3xl">

@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { EditModeToggle } from "@/components/edit-mode-toggle";
 import { Logo } from "@/components/logo";
 import { getAdminContext } from "@/lib/auth/current-user";
+import { isEditModeOn } from "@/lib/auth/edit-mode";
 import { locations } from "@/lib/locations";
 import { siteConfig } from "@/lib/site";
 
 import { AdminLoginScreen } from "./_components/admin-login-screen";
 import { AdminLogoutButton } from "./_components/admin-logout-button";
 import { AdminNav } from "./_components/admin-nav";
+import { FocusScroller } from "./_components/focus-scroller";
 
 import "./admin.css";
 
@@ -23,6 +26,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const context = await getAdminContext();
+  const editMode = await isEditModeOn();
 
   const sections = [
     {
@@ -92,6 +96,7 @@ export default async function AdminLayout({
             ) : null}
           </div>
           <div className="flex items-center gap-3 text-sm">
+            <EditModeToggle initial={editMode} />
             <Link
               href="/"
               target="_blank"
@@ -132,6 +137,7 @@ export default async function AdminLayout({
           </nav>
         </aside>
         <main id="main" className="admin-main min-w-0 flex-1">
+          <FocusScroller />
           {children}
         </main>
       </div>

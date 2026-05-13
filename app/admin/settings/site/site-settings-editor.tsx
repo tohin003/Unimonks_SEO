@@ -25,14 +25,24 @@ type Status = {
 function Panel({
   eyebrow,
   title,
+  fields,
   children,
 }: {
   eyebrow: string;
   title: string;
+  fields?: string[];
   children: React.ReactNode;
 }) {
   return (
-    <section className="panel space-y-5 p-6 md:p-7">
+    <section className="panel space-y-5 p-6 md:p-7 relative">
+      {fields?.map((field) => (
+        <span
+          key={field}
+          id={`field-${field}`}
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 left-0 h-0 w-0"
+        />
+      ))}
       <header>
         <span className="eyebrow">{eyebrow}</span>
         <h2 className="mt-3 font-headline text-2xl leading-tight text-primary md:text-3xl">
@@ -91,7 +101,18 @@ export function SiteSettingsEditor({ initial, dbConfigured }: EditorProps) {
 
   return (
     <div className="space-y-6">
-      <Panel eyebrow="Identity" title="Brand name, title, description">
+      <Panel
+        eyebrow="Identity"
+        title="Brand name, title, description"
+        fields={[
+          "name",
+          "shortName",
+          "title",
+          "description",
+          "tagline",
+          "heroLabel",
+        ]}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <TextInput
             label="Name"
@@ -142,7 +163,17 @@ export function SiteSettingsEditor({ initial, dbConfigured }: EditorProps) {
         />
       </Panel>
 
-      <Panel eyebrow="Contact" title="Phone, email, WhatsApp">
+      <Panel
+        eyebrow="Contact"
+        title="Phone, email, WhatsApp"
+        fields={[
+          "phoneDisplay",
+          "phoneHref",
+          "email",
+          "whatsappHref",
+          "siteUrl",
+        ]}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <TextInput
             label="Phone (display)"
@@ -190,7 +221,18 @@ export function SiteSettingsEditor({ initial, dbConfigured }: EditorProps) {
         />
       </Panel>
 
-      <Panel eyebrow="Address" title="Postal address (NAP)">
+      <Panel
+        eyebrow="Address"
+        title="Postal address (NAP)"
+        fields={[
+          "addressLine1",
+          "addressLine2",
+          "addressLocality",
+          "addressRegion",
+          "postalCode",
+          "addressCountry",
+        ]}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <TextInput
             label="Address line 1"
@@ -238,7 +280,11 @@ export function SiteSettingsEditor({ initial, dbConfigured }: EditorProps) {
         </div>
       </Panel>
 
-      <Panel eyebrow="Geo" title="Map coordinates (for LocalBusiness schema)">
+      <Panel
+        eyebrow="Geo"
+        title="Map coordinates (for LocalBusiness schema)"
+        fields={["geoLatitude", "geoLongitude"]}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <TextInput
             label="Latitude"
@@ -259,7 +305,11 @@ export function SiteSettingsEditor({ initial, dbConfigured }: EditorProps) {
         </div>
       </Panel>
 
-      <Panel eyebrow="Founder" title="Founding date and founder profile">
+      <Panel
+        eyebrow="Founder"
+        title="Founding date and founder profile"
+        fields={["foundingDate", "founderName", "founderRole"]}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <TextInput
             label="Founding year"
@@ -285,7 +335,11 @@ export function SiteSettingsEditor({ initial, dbConfigured }: EditorProps) {
         </div>
       </Panel>
 
-      <Panel eyebrow="Reach" title="Areas served, expertise, social links">
+      <Panel
+        eyebrow="Reach"
+        title="Areas served, expertise, social links"
+        fields={["areaServed", "knowsAbout", "sameAs"]}
+      >
         <ListInput
           label="Areas served"
           values={[...form.areaServed]}

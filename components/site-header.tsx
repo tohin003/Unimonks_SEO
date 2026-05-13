@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Editable } from "@/components/editable";
 import { Logo } from "@/components/logo";
 import { getSiteSettings } from "@/lib/content/site";
 
@@ -32,12 +33,18 @@ export async function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <a
-            href={siteConfig.phoneHref}
-            className="hidden rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-primary hover:text-primary sm:inline-flex"
+          <Editable
+            scope="settings/site"
+            field="phoneDisplay"
+            label="Phone"
           >
-            Call
-          </a>
+            <a
+              href={siteConfig.phoneHref}
+              className="hidden rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-primary hover:text-primary sm:inline-flex"
+            >
+              Call
+            </a>
+          </Editable>
           <Link
             href="/enroll#lead-form"
             className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-transform hover:-translate-y-0.5 sm:inline-flex"

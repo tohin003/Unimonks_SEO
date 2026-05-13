@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Editable } from "@/components/editable";
 import { HeroHeadline } from "@/components/hero-headline";
 import { ImageShowcase } from "@/components/image-showcase";
 import { LandingPageAmbient } from "@/components/landing-page-ambient";
@@ -100,11 +101,24 @@ export default async function HomePage() {
           <div className="section-shell relative py-14 md:py-20">
             <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_420px]">
               <div>
-                <span className="eyebrow">{siteConfig.heroLabel}</span>
+                <Editable
+                  scope="settings/site"
+                  field="heroLabel"
+                  label="Hero label"
+                >
+                  <span className="eyebrow">{siteConfig.heroLabel}</span>
+                </Editable>
                 <HeroHeadline />
-                <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                  {homeContent.heroSubhead}
-                </p>
+                <Editable
+                  scope="pages/home"
+                  field="heroSubhead"
+                  label="Hero subhead"
+                  as="div"
+                >
+                  <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+                    {homeContent.heroSubhead}
+                  </p>
+                </Editable>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
                     href="/enroll#lead-form"
@@ -119,18 +133,26 @@ export default async function HomePage() {
                     Explore study resources
                   </Link>
                 </div>
-                <div className="mt-10 grid gap-4 md:grid-cols-3">
-                  {proofPoints.map((point) => (
-                    <article key={point.title} className="panel p-5">
-                      <h2 className="text-lg font-semibold text-primary">
-                        {point.title}
-                      </h2>
-                      <p className="mt-3 text-sm leading-7 text-slate-600">
-                        {point.body}
-                      </p>
-                    </article>
-                  ))}
-                </div>
+                <Editable
+                  scope="pages/home"
+                  field="proofPoints"
+                  label="Proof points"
+                  as="div"
+                  className="mt-10"
+                >
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {proofPoints.map((point) => (
+                      <article key={point.title} className="panel p-5">
+                        <h2 className="text-lg font-semibold text-primary">
+                          {point.title}
+                        </h2>
+                        <p className="mt-3 text-sm leading-7 text-slate-600">
+                          {point.body}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </Editable>
               </div>
               <LeadForm
                 title={homeContent.leadFormCopy.title}

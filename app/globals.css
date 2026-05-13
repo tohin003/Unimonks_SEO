@@ -1024,3 +1024,77 @@
     transition: none;
   }
 }
+
+/* Inline editor affordance — only emitted when admin + edit-mode are both on,
+   so the public site renders zero of this. */
+.editable-region {
+  position: relative;
+  display: inline-block;
+  outline: 1px dashed rgba(15, 23, 42, 0.18);
+  outline-offset: 2px;
+  border-radius: 4px;
+  transition: outline-color 160ms ease;
+}
+
+.editable-region:hover,
+.editable-region:focus-within {
+  outline-color: rgba(15, 23, 42, 0.55);
+}
+
+.editable-pencil {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 9999px;
+  background: #17233b;
+  color: #f8fafc;
+  padding: 0.25rem 0.6rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 20px -10px rgba(15, 23, 42, 0.55);
+  opacity: 0;
+  transform: translateY(-2px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    background 160ms ease;
+  pointer-events: none;
+}
+
+.editable-region:hover > .editable-pencil,
+.editable-region:focus-within > .editable-pencil {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.editable-pencil:hover {
+  background: #0f1a30;
+}
+
+.editable-pencil-label {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .editable-pencil-label {
+    display: inline;
+  }
+}
+
+/* Focused-field pulse used by the admin focus scroller after a deep-link. */
+@keyframes admin-field-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 118, 206, 0); }
+  20% { box-shadow: 0 0 0 6px rgba(0, 118, 206, 0.22); }
+}
+
+[data-admin-focus="true"] {
+  animation: admin-field-pulse 1600ms ease-out;
+  border-radius: 18px;
+}

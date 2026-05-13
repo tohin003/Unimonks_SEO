@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Editable } from "@/components/editable";
 import { Logo } from "@/components/logo";
 import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { getSiteSettings } from "@/lib/content/site";
@@ -59,23 +60,30 @@ export async function SiteFooter() {
             student-friendly content so families can read, compare, and book
             the next step without confusion.
           </p>
-          <address className="not-italic text-sm leading-7 text-slate-600">
-            <p>{siteConfig.addressLines[0]}</p>
-            <p>{siteConfig.addressLines[1]}</p>
-            <p>
-              <a href={siteConfig.phoneHref} className="hover:text-primary">
-                {siteConfig.phoneDisplay}
-              </a>
-            </p>
-            <p>
-              <a
-                href={`mailto:${siteConfig.email}`}
-                className="hover:text-primary"
-              >
-                {siteConfig.email}
-              </a>
-            </p>
-          </address>
+          <Editable
+            scope="settings/site"
+            field="addressLine1"
+            label="Address"
+            as="div"
+          >
+            <address className="not-italic text-sm leading-7 text-slate-600">
+              <p>{siteConfig.addressLines[0]}</p>
+              <p>{siteConfig.addressLines[1]}</p>
+              <p>
+                <a href={siteConfig.phoneHref} className="hover:text-primary">
+                  {siteConfig.phoneDisplay}
+                </a>
+              </p>
+              <p>
+                <a
+                  href={`mailto:${siteConfig.email}`}
+                  className="hover:text-primary"
+                >
+                  {siteConfig.email}
+                </a>
+              </p>
+            </address>
+          </Editable>
         </div>
         <div className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">

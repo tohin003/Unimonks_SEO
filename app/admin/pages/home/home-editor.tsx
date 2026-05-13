@@ -25,14 +25,16 @@ type Status = {
 function Panel({
   eyebrow,
   title,
+  id,
   children,
 }: {
   eyebrow: string;
   title: string;
+  id?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="panel space-y-5 p-6 md:p-7">
+    <section id={id} className="panel space-y-5 p-6 md:p-7">
       <header>
         <span className="eyebrow">{eyebrow}</span>
         <h2 className="mt-3 font-headline text-2xl leading-tight text-primary md:text-3xl">
@@ -125,7 +127,7 @@ export function HomeEditor({ initial, dbConfigured }: EditorProps) {
 
   return (
     <div className="space-y-6">
-      <Panel eyebrow="Hero" title="Subhead paragraph beneath the H1">
+      <Panel id="field-heroSubhead" eyebrow="Hero" title="Subhead paragraph beneath the H1">
         <TextareaInput
           label="Hero subhead"
           value={form.heroSubhead}
@@ -136,7 +138,7 @@ export function HomeEditor({ initial, dbConfigured }: EditorProps) {
         />
       </Panel>
 
-      <Panel eyebrow="Proof points" title="Three cards under the hero">
+      <Panel id="field-proofPoints" eyebrow="Proof points" title="Three cards under the hero">
         <RepeatableGroup<HomeContentInput["proofPoints"][number]>
           label="Proof points"
           values={form.proofPoints}
@@ -164,7 +166,7 @@ export function HomeEditor({ initial, dbConfigured }: EditorProps) {
         />
       </Panel>
 
-      <Panel eyebrow="Programs intro" title="Header strip above the programs grid">
+      <Panel id="field-programsIntro" eyebrow="Programs intro" title="Header strip above the programs grid">
         <IntroFields
           value={form.programsIntro}
           onChange={(programsIntro) =>

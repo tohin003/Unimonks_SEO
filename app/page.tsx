@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { HeroHeadline } from "@/components/hero-headline";
+import { ImageShowcase } from "@/components/image-showcase";
 import { LandingPageAmbient } from "@/components/landing-page-ambient";
 import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
@@ -13,6 +14,7 @@ import { getHomeContent } from "@/lib/content/home";
 import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { getFeaturedPosts } from "@/lib/content/blog";
 import { getPrograms } from "@/lib/content/programs";
+import { listEnabledShowcaseSlides } from "@/lib/content/showcase";
 import {
   buildBreadcrumbSchema,
   buildCourseListSchema,
@@ -48,14 +50,21 @@ function buildHomeSchemas(
 }
 
 export default async function HomePage() {
-  const [featuredPosts, programs, knowledgeTracks, faqItems, homeContent] =
-    await Promise.all([
-      getFeaturedPosts(),
-      getPrograms(),
-      getKnowledgeTracks(),
-      getFaqItems("home"),
-      getHomeContent(),
-    ]);
+  const [
+    featuredPosts,
+    programs,
+    knowledgeTracks,
+    faqItems,
+    homeContent,
+    showcaseSlides,
+  ] = await Promise.all([
+    getFeaturedPosts(),
+    getPrograms(),
+    getKnowledgeTracks(),
+    getFaqItems("home"),
+    getHomeContent(),
+    listEnabledShowcaseSlides(),
+  ]);
   const primaryPost = featuredPosts[0];
   const secondaryPosts = featuredPosts.slice(1);
   const homeSchemas = buildHomeSchemas(programs, faqItems);
@@ -342,6 +351,8 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        <ImageShowcase slides={showcaseSlides} />
 
         <section className="section-shell relative py-8 md:py-14">
           <span

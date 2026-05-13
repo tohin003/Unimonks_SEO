@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { MediaFrame } from "@/components/media-frame";
 import type { Post } from "@/lib/posts";
 
 type PostCardProps = {
@@ -17,17 +17,20 @@ export function PostCard({ post, featured = false }: PostCardProps) {
       }`}
     >
       {post.coverImage ? (
-        <div className="-mx-2 mb-5 overflow-hidden rounded-[20px] bg-slate-100">
-          <div className="relative aspect-[21/9]">
-            <Image
-              src={post.coverImage.publicUrl}
-              alt={post.coverImage.alt || post.title}
-              width={post.coverImage.width}
-              height={post.coverImage.height}
-              sizes={featured ? "(max-width: 1024px) 92vw, 720px" : "(max-width: 1024px) 92vw, 360px"}
-              className="h-full w-full object-cover transition duration-500 group-hover:saturate-110"
-            />
-          </div>
+        <div className="-mx-2 mb-5">
+          <MediaFrame
+            src={post.coverImage.publicUrl}
+            alt={post.coverImage.alt || post.title}
+            width={post.coverImage.width}
+            height={post.coverImage.height}
+            ratio="21 / 9"
+            variant="bare"
+            sizes={
+              featured
+                ? "(max-width: 1024px) 92vw, 720px"
+                : "(max-width: 1024px) 92vw, 360px"
+            }
+          />
         </div>
       ) : null}
       <div className="mb-5 flex items-center justify-between gap-4">

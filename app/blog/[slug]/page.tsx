@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { MediaFrame } from "@/components/media-frame";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -133,19 +133,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <span>{post.seoQuery}</span>
               </div>
               {post.coverImage ? (
-                <figure className="mt-8 overflow-hidden rounded-[28px] bg-slate-100 ring-1 ring-slate-200/80">
-                  <div className="relative aspect-[21/9]">
-                    <Image
-                      src={post.coverImage.publicUrl}
-                      alt={post.coverImage.alt || post.title}
-                      width={post.coverImage.width}
-                      height={post.coverImage.height}
-                      sizes="(max-width: 1024px) 92vw, 760px"
-                      priority
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                </figure>
+                <div className="mt-8">
+                  <MediaFrame
+                    src={post.coverImage.publicUrl}
+                    alt={post.coverImage.alt || post.title}
+                    width={post.coverImage.width}
+                    height={post.coverImage.height}
+                    ratio="21 / 9"
+                    variant="ring"
+                    sizes="(max-width: 1024px) 92vw, 760px"
+                    priority
+                  />
+                </div>
               ) : null}
               <div className="mt-8 rounded-[28px] bg-[#eef4ff] p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">

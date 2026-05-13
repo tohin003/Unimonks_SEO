@@ -4,6 +4,15 @@ import Link from "next/link";
 import type { ShowcaseSlide } from "@/lib/content/showcase";
 import { jsonLdString, siteConfig } from "@/lib/site";
 
+// Note: SlideCard renders next/image directly rather than going through
+// <MediaFrame> because the card overlays an absolute-positioned scrim and
+// headline that need to sit *inside* the same overflow-hidden rounded box
+// as the image. MediaFrame's variant chrome would compete with the
+// existing panel + shadow recipe declared on the card itself. Both
+// surfaces still honour the §6.6 design contract (explicit width/height,
+// CSS aspect-ratio reservation, brand color overlay, priority on the
+// first three images).
+
 type ImageShowcaseProps = {
   slides: ShowcaseSlide[];
   eyebrow?: string;

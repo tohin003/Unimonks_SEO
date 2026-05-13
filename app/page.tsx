@@ -9,6 +9,7 @@ import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getFaqItems } from "@/lib/content/faqs";
+import { getHomeContent } from "@/lib/content/home";
 import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { getPrograms } from "@/lib/content/programs";
 import { getFeaturedPosts } from "@/lib/posts";
@@ -46,46 +47,19 @@ function buildHomeSchemas(
   ];
 }
 
-const supportSteps = [
-  {
-    title: "Plan your preparation",
-    body: "Understand how GT, English, and domain subjects fit into one realistic weekly routine instead of scattered study.",
-  },
-  {
-    title: "Read practical guidance",
-    body: "Use the articles and resources to compare coaching options, improve revision, and prepare for DU admissions.",
-  },
-  {
-    title: "Speak to the team",
-    body: "Book counseling when you want batch guidance, local support in Munirka, or help after the exam.",
-  },
-];
-
-const proofPoints = [
-  {
-    title: "Local support in Munirka",
-    body: "Students and parents get a nearby center for counseling, follow-ups, and face-to-face guidance instead of a distant online-only setup.",
-  },
-  {
-    title: "Practical CUET preparation",
-    body: "Classes and content stay focused on GT, English, domain subjects, mock review, and a study plan students can actually sustain.",
-  },
-  {
-    title: "Admissions guidance after the exam",
-    body: "Support continues into college choices, document planning, and next-step decisions instead of stopping at test day.",
-  },
-];
-
 export default async function HomePage() {
-  const [featuredPosts, programs, knowledgeTracks, faqItems] = await Promise.all([
-    getFeaturedPosts(),
-    getPrograms(),
-    getKnowledgeTracks(),
-    getFaqItems("home"),
-  ]);
+  const [featuredPosts, programs, knowledgeTracks, faqItems, homeContent] =
+    await Promise.all([
+      getFeaturedPosts(),
+      getPrograms(),
+      getKnowledgeTracks(),
+      getFaqItems("home"),
+      getHomeContent(),
+    ]);
   const primaryPost = featuredPosts[0];
   const secondaryPosts = featuredPosts.slice(1);
   const homeSchemas = buildHomeSchemas(programs, faqItems);
+  const { proofPoints, supportSteps } = homeContent;
 
   return (
     <>
@@ -120,9 +94,7 @@ export default async function HomePage() {
                 <span className="eyebrow">{siteConfig.heroLabel}</span>
                 <HeroHeadline />
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                  UNIMONKS curates GT, English, domain classes, mock review,
-                  and admissions support into one calm, high-trust preparation
-                  journey in Munirka, New Delhi.
+                  {homeContent.heroSubhead}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
@@ -152,8 +124,8 @@ export default async function HomePage() {
                 </div>
               </div>
               <LeadForm
-                title="Talk to the UNIMONKS team"
-                description="Share your details and the team will help you choose the right batch, discuss your subject needs, and guide you on the next step."
+                title={homeContent.leadFormCopy.title}
+                description={homeContent.leadFormCopy.description}
                 submitLabel="Request a callback"
                 source="home-page"
               />
@@ -189,14 +161,12 @@ export default async function HomePage() {
           />
           <div className="grid gap-10 lg:grid-cols-[0.85fr_minmax(0,1fr)]">
             <div>
-              <span className="eyebrow">Courses</span>
+              <span className="eyebrow">{homeContent.programsIntro.eyebrow}</span>
               <h2 className="mt-5 section-title">
-                Coaching plans built around real CUET needs.
+                {homeContent.programsIntro.headline}
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                Strong preparation is not only about content quantity. Students
-                usually need GT, English, domain support, mock feedback, and
-                admission clarity working together.
+                {homeContent.programsIntro.description}
               </p>
             </div>
             <div className="grid gap-5">
@@ -243,19 +213,16 @@ export default async function HomePage() {
           <div className="panel overflow-hidden p-6 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[0.8fr_minmax(0,1fr)]">
               <div>
-                <span className="eyebrow">How Students Use The Site</span>
+                <span className="eyebrow">{supportSteps.eyebrow}</span>
                 <h2 className="mt-5 section-title">
-                  Learn first, then take the next step with confidence.
+                  {supportSteps.headline}
                 </h2>
                 <p className="mt-5 text-base leading-8 text-slate-600">
-                  This website is designed to be useful before it asks for a
-                  form submission. Students can understand the exam, read
-                  practical articles, and then ask for personal guidance when
-                  they are ready.
+                  {supportSteps.description}
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
-                {supportSteps.map((step) => (
+                {supportSteps.items.map((step) => (
                   <article
                     key={step.title}
                     className="rounded-[24px] border border-slate-200 bg-white p-5"
@@ -287,9 +254,9 @@ export default async function HomePage() {
           />
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <span className="eyebrow">Latest Articles</span>
+              <span className="eyebrow">{homeContent.articlesIntro.eyebrow}</span>
               <h2 className="mt-5 section-title">
-                CUET articles, strategy notes, and admission guidance.
+                {homeContent.articlesIntro.headline}
               </h2>
             </div>
             <Link
@@ -353,14 +320,12 @@ export default async function HomePage() {
           />
           <div className="grid gap-10 lg:grid-cols-[0.8fr_minmax(0,1fr)]">
             <div>
-              <span className="eyebrow">FAQs</span>
+              <span className="eyebrow">{homeContent.faqIntro.eyebrow}</span>
               <h2 className="mt-5 section-title">
-                Answers students and parents usually need first.
+                {homeContent.faqIntro.headline}
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-600">
-                Clear headings, useful answers, and strong internal links help
-                both search engines and students understand what the business
-                actually offers.
+                {homeContent.faqIntro.description}
               </p>
             </div>
             <div className="space-y-4">
@@ -403,14 +368,12 @@ export default async function HomePage() {
           />
           <div className="panel grid gap-8 p-6 md:grid-cols-[1fr_0.9fr] md:p-10">
             <div>
-              <span className="eyebrow">Visit UNIMONKS In Munirka</span>
+              <span className="eyebrow">{homeContent.contactIntro.eyebrow}</span>
               <h2 className="mt-5 section-title">
-                Local trust matters when preparation needs consistency.
+                {homeContent.contactIntro.headline}
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
-                The Munirka center gives students and parents a real place to
-                ask questions, review progress, discuss batches, and stay close
-                to the counseling process.
+                {homeContent.contactIntro.description}
               </p>
             </div>
             <address className="not-italic rounded-[24px] bg-[#17233b] p-6 text-white">

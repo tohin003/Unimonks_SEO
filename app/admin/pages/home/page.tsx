@@ -1,48 +1,29 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
-import { faqItems, programs, siteConfig } from "@/lib/site";
+import { getHomeContent } from "@/lib/content/home";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { HomeEditor } from "./home-editor";
 
 export const metadata: Metadata = { title: "Home page" };
 
-export default function AdminHomePage() {
+export default async function AdminHomeContentPage() {
+  const content = await getHomeContent();
+
   return (
-    <SectionPlaceholder
-      eyebrow="Pages · Home"
-      title="Edit the home page."
-      description="Every editable surface on the / route — hero, proof points, programs intro, knowledge tracks, FAQ block, and contact section."
-      livePath="/"
-      fields={[
-        {
-          name: "Hero eyebrow + headline",
-          description: "The short label above the H1 and the main H1 copy.",
-          sample: `${siteConfig.heroLabel} → ${siteConfig.title}`,
-        },
-        {
-          name: "Hero subhead",
-          description: "Paragraph beneath the H1 introducing the centre.",
-        },
-        {
-          name: "Hero image",
-          description: "Optional 16:9 image rendered beside the hero copy.",
-        },
-        {
-          name: "Three proof points",
-          description: "Repeatable cards beneath the hero (title + body).",
-        },
-        {
-          name: "Programs intro",
-          description: "Eyebrow + headline + description above the programs grid.",
-        },
-        {
-          name: "Programs",
-          description: `Re-orderable list of ${programs.length} programs (Foundation, Target, Admissions).`,
-        },
-        {
-          name: "FAQ block",
-          description: `Re-orderable list of ${faqItems.length} questions and answers.`,
-        },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Pages · Home</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Edit the home page sections.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Hero subhead, proof points, section intros, lead-form copy, and
+          contact intro. The programs grid + knowledge tracks + FAQ items
+          themselves are edited in the dedicated Settings editors.
+        </p>
+      </header>
+      <HomeEditor initial={content} dbConfigured={isDbConfigured()} />
+    </div>
   );
 }

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getAdminContext } from "@/lib/auth/current-user";
+import { listMediaAssets, type MediaAsset } from "@/lib/content/media";
 import { getDb } from "@/lib/db/client";
 import { mediaAssets } from "@/lib/db/schema";
 import { getStorage } from "@/lib/storage";
@@ -245,6 +246,17 @@ export async function updateMediaAssetAction(
     console.error("[admin] updateMediaAssetAction failed", error);
     return { ok: false, message: "Could not save asset." };
   }
+}
+
+/**
+ * Read-only listing used by the ImagePicker modal. Returns the same shape
+ * as the media library page reader so the picker can show previews + alt
+ * text without an extra round trip.
+ */
+export async function listMediaForPickerAction(): Promise<MediaAsset[]> {
+  const ctx = await getAdminContext();
+  if (!ctx.authenticated) return [];
+  return listMediaAssets();
 }
 
 export async function softDeleteMediaAction(id: string): Promise<ActionResult> {

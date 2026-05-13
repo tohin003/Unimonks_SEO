@@ -1,21 +1,29 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
-import { faqItems } from "@/lib/site";
+import { getFaqItems } from "@/lib/content/faqs";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { FaqsEditor } from "./faqs-editor";
 
 export const metadata: Metadata = { title: "FAQs" };
 
-export default function AdminFaqSettings() {
+export default async function AdminFaqsSettings() {
+  const faqs = await getFaqItems("home");
+
   return (
-    <SectionPlaceholder
-      eyebrow="Settings · FAQs"
-      title="Edit the global FAQ block."
-      description={`The ${faqItems.length} questions on the home page FAQ block. Per-location FAQs are edited inside each Location editor.`}
-      fields={[
-        { name: "Question", description: "Question text rendered as H3." },
-        { name: "Answer", description: "Answer paragraph rendered below." },
-        { name: "Order", description: "Drag-and-drop reorder." },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Settings · FAQs</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Edit the home page FAQ block.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Each question appears on the home page and inside the FAQPage JSON-LD
+          that AI Overviews extract from. Per-location FAQs are edited inside
+          each Location editor.
+        </p>
+      </header>
+      <FaqsEditor initialFaqs={faqs} dbConfigured={isDbConfigured()} />
+    </div>
   );
 }

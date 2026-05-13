@@ -1,4 +1,4 @@
-import { pressMentions } from "@/lib/press";
+import { getPressMentions } from "@/lib/content/press";
 
 type PressStripProps = {
   variant?: "standalone" | "panel";
@@ -6,11 +6,12 @@ type PressStripProps = {
   heading?: string;
 };
 
-export function PressStrip({
+export async function PressStrip({
   variant = "standalone",
   eyebrow = "Featured in",
   heading = "UNIMONKS in national press",
 }: PressStripProps) {
+  const pressMentions = await getPressMentions();
   const wrapperClass =
     variant === "panel"
       ? "panel p-6 md:p-8"

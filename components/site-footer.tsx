@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
+import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { locations } from "@/lib/locations";
-import { knowledgeTracks, siteConfig } from "@/lib/site";
+import { siteConfig } from "@/lib/site";
 
 const footerLinks = [
   { href: "/", label: "Home" },
@@ -14,7 +15,8 @@ const footerLinks = [
   { href: "/blog", label: "Blog" },
 ];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const knowledgeTracks = await getKnowledgeTracks();
   return (
     <footer className="border-t border-slate-200/80 bg-[#f4efe5]">
       <div className="mx-auto max-w-7xl px-6 pt-14 md:px-10">

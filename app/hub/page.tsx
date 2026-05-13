@@ -4,8 +4,9 @@ import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { getFeaturedPosts, getPosts } from "@/lib/posts";
-import { jsonLdString, knowledgeTracks, siteConfig } from "@/lib/site";
+import { jsonLdString, siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Knowledge Hub",
@@ -24,8 +25,11 @@ export const metadata: Metadata = {
 };
 
 export default async function KnowledgeHubPage() {
-  const posts = await getPosts();
-  const featuredPosts = await getFeaturedPosts();
+  const [posts, featuredPosts, knowledgeTracks] = await Promise.all([
+    getPosts(),
+    getFeaturedPosts(),
+    getKnowledgeTracks(),
+  ]);
   const leadPost = featuredPosts[0];
   const morePosts = posts.filter((post) => post.slug !== leadPost?.slug);
   const hubSchema = {

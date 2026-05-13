@@ -8,6 +8,8 @@ import { PostCard } from "@/components/post-card";
 import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getFaqItems } from "@/lib/content/faqs";
+import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { getPrograms } from "@/lib/content/programs";
 import { getFeaturedPosts } from "@/lib/posts";
 import {
@@ -15,12 +17,7 @@ import {
   buildCourseListSchema,
   buildFAQSchema,
 } from "@/lib/schemas";
-import {
-  faqItems,
-  jsonLdString,
-  knowledgeTracks,
-  siteConfig,
-} from "@/lib/site";
+import { jsonLdString, siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "CUET Coaching in Munirka, New Delhi",
@@ -38,11 +35,14 @@ export const metadata: Metadata = {
   ],
 };
 
-function buildHomeSchemas(programs: Awaited<ReturnType<typeof getPrograms>>) {
+function buildHomeSchemas(
+  programs: Awaited<ReturnType<typeof getPrograms>>,
+  faqs: Awaited<ReturnType<typeof getFaqItems>>,
+) {
   return [
     buildBreadcrumbSchema([{ name: "Home", url: siteConfig.siteUrl }]),
     buildCourseListSchema(programs),
-    buildFAQSchema(),
+    buildFAQSchema(faqs),
   ];
 }
 
@@ -77,13 +77,15 @@ const proofPoints = [
 ];
 
 export default async function HomePage() {
-  const [featuredPosts, programs] = await Promise.all([
+  const [featuredPosts, programs, knowledgeTracks, faqItems] = await Promise.all([
     getFeaturedPosts(),
     getPrograms(),
+    getKnowledgeTracks(),
+    getFaqItems("home"),
   ]);
   const primaryPost = featuredPosts[0];
   const secondaryPosts = featuredPosts.slice(1);
-  const homeSchemas = buildHomeSchemas(programs);
+  const homeSchemas = buildHomeSchemas(programs, faqItems);
 
   return (
     <>

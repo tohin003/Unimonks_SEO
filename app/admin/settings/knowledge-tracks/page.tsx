@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
-import { knowledgeTracks } from "@/lib/site";
+import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { KnowledgeTracksEditor } from "./knowledge-tracks-editor";
 
 export const metadata: Metadata = { title: "Knowledge tracks" };
 
-export default function AdminKnowledgeTracksSettings() {
+export default async function AdminKnowledgeTracksSettings() {
+  const tracks = await getKnowledgeTracks();
   return (
-    <SectionPlaceholder
-      eyebrow="Settings · Knowledge tracks"
-      title="Edit the topic tracks on the Hub + footer."
-      description={`${knowledgeTracks.length} tracks shared between the /hub page and the site footer.`}
-      fields={[
-        { name: "Title", description: "Short topic label." },
-        { name: "Description", description: "1-2 line description rendered next to the title." },
-        { name: "Order", description: "Drag-and-drop reorder." },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Settings · Knowledge tracks</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Edit the topic tracks on the Hub and footer.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          These tracks appear on the /hub page and in the site footer. Saving
+          revalidates both.
+        </p>
+      </header>
+      <KnowledgeTracksEditor
+        initialTracks={tracks}
+        dbConfigured={isDbConfigured()}
+      />
+    </div>
   );
 }

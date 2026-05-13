@@ -8,6 +8,7 @@ import { PostCard } from "@/components/post-card";
 import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getPrograms } from "@/lib/content/programs";
 import { getFeaturedPosts } from "@/lib/posts";
 import {
   buildBreadcrumbSchema,
@@ -18,7 +19,6 @@ import {
   faqItems,
   jsonLdString,
   knowledgeTracks,
-  programs,
   siteConfig,
 } from "@/lib/site";
 
@@ -38,13 +38,13 @@ export const metadata: Metadata = {
   ],
 };
 
-const homeSchemas = [
-  buildBreadcrumbSchema([
-    { name: "Home", url: siteConfig.siteUrl },
-  ]),
-  buildCourseListSchema(),
-  buildFAQSchema(),
-];
+function buildHomeSchemas(programs: Awaited<ReturnType<typeof getPrograms>>) {
+  return [
+    buildBreadcrumbSchema([{ name: "Home", url: siteConfig.siteUrl }]),
+    buildCourseListSchema(programs),
+    buildFAQSchema(),
+  ];
+}
 
 const supportSteps = [
   {
@@ -77,9 +77,13 @@ const proofPoints = [
 ];
 
 export default async function HomePage() {
-  const featuredPosts = await getFeaturedPosts();
+  const [featuredPosts, programs] = await Promise.all([
+    getFeaturedPosts(),
+    getPrograms(),
+  ]);
   const primaryPost = featuredPosts[0];
   const secondaryPosts = featuredPosts.slice(1);
+  const homeSchemas = buildHomeSchemas(programs);
 
   return (
     <>

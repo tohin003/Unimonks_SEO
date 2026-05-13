@@ -1,7 +1,6 @@
 import {
   absoluteUrl,
   faqItems as defaultFaqItems,
-  programs,
   siteConfig,
   type FaqItem,
   type Program,
@@ -112,7 +111,7 @@ export function buildFAQSchema(items: FaqItem[] = defaultFaqItems) {
   };
 }
 
-export function buildCourseListSchema(items: Program[] = [...programs]) {
+export function buildCourseListSchema(items: Program[]) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",

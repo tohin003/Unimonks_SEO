@@ -4,6 +4,7 @@ import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getPrograms } from "@/lib/content/programs";
 import {
   getLocationBySlug,
   getOtherLocations,
@@ -15,7 +16,7 @@ import {
   buildFAQSchema,
   ORG_ID,
 } from "@/lib/schemas";
-import { absoluteUrl, jsonLdString, programs, siteConfig } from "@/lib/site";
+import { absoluteUrl, jsonLdString, siteConfig, type Program } from "@/lib/site";
 
 type LocationPageViewProps = {
   slug: string;
@@ -28,10 +29,13 @@ export async function LocationPageView({ slug }: LocationPageViewProps) {
   }
 
   const otherLocations = getOtherLocations(location.slug);
-  const featuredPosts = await getFeaturedPosts();
+  const [featuredPosts, programs] = await Promise.all([
+    getFeaturedPosts(),
+    getPrograms(),
+  ]);
   const canonicalUrl = absoluteUrl(`/cuet-coaching-in-${location.slug}`);
 
-  const localServiceSchema = buildLocalServiceSchema(location);
+  const localServiceSchema = buildLocalServiceSchema(location, programs);
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", url: siteConfig.siteUrl },
     { name: location.area, url: canonicalUrl },
@@ -334,7 +338,7 @@ export async function LocationPageView({ slug }: LocationPageViewProps) {
   );
 }
 
-function buildLocalServiceSchema(location: Location) {
+function buildLocalServiceSchema(location: Location, programs: Program[]) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",

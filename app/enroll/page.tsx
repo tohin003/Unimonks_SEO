@@ -4,7 +4,8 @@ import Link from "next/link";
 import { LeadForm } from "@/components/lead-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { jsonLdString, programs, siteConfig } from "@/lib/site";
+import { getPrograms } from "@/lib/content/programs";
+import { jsonLdString, siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Book CUET Counseling in Munirka",
@@ -45,7 +46,8 @@ const counselingPoints = [
   },
 ];
 
-export default function EnrollPage() {
+export default async function EnrollPage() {
+  const programs = await getPrograms();
   return (
     <>
       <script

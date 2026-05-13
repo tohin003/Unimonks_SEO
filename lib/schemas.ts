@@ -1,11 +1,15 @@
+import type { SiteSettings } from "@/lib/content/site";
 import {
   absoluteUrl,
-  faqItems as defaultFaqItems,
   siteConfig,
   type FaqItem,
   type Program,
 } from "@/lib/site";
 
+// @id anchors derived from the canonical site URL. We use siteConfig.siteUrl
+// (which is sourced from NEXT_PUBLIC_SITE_URL at build time) rather than the
+// editable DB value, so the @id stays stable even if the displayed Site URL
+// in the admin is being edited.
 export const ORG_ID = `${siteConfig.siteUrl}/#org`;
 export const WEBSITE_ID = `${siteConfig.siteUrl}/#website`;
 export const FOUNDER_ID = `${siteConfig.siteUrl}/#founder`;
@@ -15,69 +19,69 @@ export type BreadcrumbItem = {
   url: string;
 };
 
-export function buildOrganizationSchema() {
-  const sameAs = siteConfig.sameAs.filter(Boolean);
+export function buildOrganizationSchema(settings: SiteSettings) {
+  const sameAs = settings.sameAs.filter(Boolean);
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "@id": ORG_ID,
-    name: siteConfig.name,
-    alternateName: siteConfig.shortName,
-    url: siteConfig.siteUrl,
+    name: settings.name,
+    alternateName: settings.shortName,
+    url: settings.siteUrl,
     logo: absoluteUrl("/unimonks-logo.png"),
     image: absoluteUrl("/unimonks-logo.png"),
-    description: siteConfig.description,
-    slogan: siteConfig.tagline,
-    email: siteConfig.email,
-    telephone: siteConfig.phoneDisplay,
-    foundingDate: siteConfig.foundingDate,
+    description: settings.description,
+    slogan: settings.tagline,
+    email: settings.email,
+    telephone: settings.phoneDisplay,
+    foundingDate: settings.foundingDate,
     founder: { "@id": FOUNDER_ID },
     address: {
       "@type": "PostalAddress",
-      streetAddress: siteConfig.addressLines[0],
-      addressLocality: siteConfig.addressLocality,
-      addressRegion: siteConfig.addressRegion,
-      postalCode: siteConfig.postalCode,
-      addressCountry: siteConfig.addressCountry,
+      streetAddress: settings.addressLines[0],
+      addressLocality: settings.addressLocality,
+      addressRegion: settings.addressRegion,
+      postalCode: settings.postalCode,
+      addressCountry: settings.addressCountry,
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: siteConfig.geo.latitude,
-      longitude: siteConfig.geo.longitude,
+      latitude: settings.geo.latitude,
+      longitude: settings.geo.longitude,
     },
-    areaServed: siteConfig.areaServed,
-    knowsAbout: siteConfig.knowsAbout,
+    areaServed: settings.areaServed,
+    knowsAbout: settings.knowsAbout,
     ...(sameAs.length ? { sameAs } : {}),
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "admissions",
-      telephone: siteConfig.phoneDisplay,
-      email: siteConfig.email,
+      telephone: settings.phoneDisplay,
+      email: settings.email,
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
     },
   };
 }
 
-export function buildFounderSchema() {
+export function buildFounderSchema(settings: SiteSettings) {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": FOUNDER_ID,
-    name: siteConfig.founder.name,
-    jobTitle: siteConfig.founder.role,
+    name: settings.founder.name,
+    jobTitle: settings.founder.role,
     worksFor: { "@id": ORG_ID },
   };
 }
 
-export function buildWebSiteSchema() {
+export function buildWebSiteSchema(settings: SiteSettings) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": WEBSITE_ID,
-    url: siteConfig.siteUrl,
-    name: siteConfig.name,
-    description: siteConfig.description,
+    url: settings.siteUrl,
+    name: settings.name,
+    description: settings.description,
     inLanguage: "en-IN",
     publisher: { "@id": ORG_ID },
   };
@@ -96,7 +100,7 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
   };
 }
 
-export function buildFAQSchema(items: FaqItem[] = defaultFaqItems) {
+export function buildFAQSchema(items: FaqItem[]) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -111,11 +115,14 @@ export function buildFAQSchema(items: FaqItem[] = defaultFaqItems) {
   };
 }
 
-export function buildCourseListSchema(items: Program[]) {
+export function buildCourseListSchema(
+  items: Program[],
+  organizationName: string = siteConfig.name,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `${siteConfig.name} Courses`,
+    name: `${organizationName} Courses`,
     itemListElement: items.map((program, index) => ({
       "@type": "Course",
       position: index + 1,

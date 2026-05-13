@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { getSiteSettings } from "@/lib/content/site";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
 import {
   buildFounderSchema,
@@ -68,20 +69,21 @@ export const viewport: Viewport = {
   themeColor: "#f7f5ef",
 };
 
-const siteGraph = {
-  "@context": "https://schema.org",
-  "@graph": [
-    buildOrganizationSchema(),
-    buildFounderSchema(),
-    buildWebSiteSchema(),
-  ],
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+  const siteGraph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      buildOrganizationSchema(settings),
+      buildFounderSchema(settings),
+      buildWebSiteSchema(settings),
+    ],
+  };
+
   return (
     <html lang="en">
       <body className="font-body text-slate-900 antialiased">

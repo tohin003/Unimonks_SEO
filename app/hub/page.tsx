@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getHubContent } from "@/lib/content/hub";
 import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
-import { getFeaturedPosts, getPosts } from "@/lib/posts";
+import { getFeaturedPosts, getPosts } from "@/lib/content/blog";
 import { jsonLdString, siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {

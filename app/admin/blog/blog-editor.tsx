@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import {
+  deletePostAction,
+  savePostAction,
+} from "@/app/admin/_actions/blog";
 import type { Post } from "@/lib/posts";
 
 type BlogEditorProps = {
@@ -103,33 +107,25 @@ export function BlogEditor({ initialPosts }: BlogEditorProps) {
     setMessage(null);
     setError(null);
 
-    const endpoint = selectedSlug
-      ? `/api/admin/posts/${selectedSlug}`
-      : "/api/admin/posts";
-    const method = selectedSlug ? "PUT" : "POST";
-    const response = await fetch(endpoint, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(editorStateToPayload(form)),
-    });
-    const data = (await response.json().catch(() => null)) as
-      | { message?: string; post?: Post; posts?: Post[] }
-      | null;
+    const payload = editorStateToPayload(form);
+    const result = await savePostAction(
+      payload,
+      selectedSlug ?? undefined,
+    );
 
-    if (!response.ok || !data?.post || !data.posts) {
-      setError(data?.message ?? "The post could not be saved.");
+    if (!result.ok) {
+      setError(result.message);
       return;
     }
 
-    setPosts(data.posts);
-    setSelectedSlug(data.post.slug);
-    setForm(postToEditorState(data.post));
+    setPosts(result.posts);
+    setSelectedSlug(result.post.slug);
+    setForm(postToEditorState(result.post));
     setMessage(
-      data.post.published
-        ? "Post published successfully."
-        : "Draft saved successfully.",
+      result.message ??
+        (result.post.published
+          ? "Post published successfully."
+          : "Draft saved successfully."),
     );
     startTransition(() => {
       router.refresh();
@@ -148,23 +144,18 @@ export function BlogEditor({ initialPosts }: BlogEditorProps) {
     setMessage(null);
     setError(null);
 
-    const response = await fetch(`/api/admin/posts/${selectedSlug}`, {
-      method: "DELETE",
-    });
-    const data = (await response.json().catch(() => null)) as
-      | { message?: string; posts?: Post[] }
-      | null;
+    const result = await deletePostAction(selectedSlug);
 
-    if (!response.ok || !data?.posts) {
-      setError(data?.message ?? "The post could not be deleted.");
+    if (!result.ok) {
+      setError(result.message);
       return;
     }
 
-    setPosts(data.posts);
-    const nextPost = data.posts[0];
+    setPosts(result.posts);
+    const nextPost = result.posts[0];
     setSelectedSlug(nextPost?.slug ?? null);
     setForm(nextPost ? postToEditorState(nextPost) : createEmptyPost());
-    setMessage("Post deleted.");
+    setMessage(result.message ?? "Post deleted.");
     startTransition(() => {
       router.refresh();
     });

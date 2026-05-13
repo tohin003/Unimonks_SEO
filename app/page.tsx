@@ -11,8 +11,8 @@ import { SiteHeader } from "@/components/site-header";
 import { getFaqItems } from "@/lib/content/faqs";
 import { getHomeContent } from "@/lib/content/home";
 import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
+import { getFeaturedPosts } from "@/lib/content/blog";
 import { getPrograms } from "@/lib/content/programs";
-import { getFeaturedPosts } from "@/lib/posts";
 import {
   buildBreadcrumbSchema,
   buildCourseListSchema,

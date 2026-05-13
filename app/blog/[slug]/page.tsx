@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getPostBySlug, getPosts, getRelatedPosts } from "@/lib/posts";
+import { getPostBySlug, getPosts, getRelatedPosts } from "@/lib/content/blog";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
 
 type BlogPostPageProps = {

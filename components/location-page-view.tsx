@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getLocationBySlug } from "@/lib/content/locations";
 import { getPrograms } from "@/lib/content/programs";
 import { getOtherLocations, type Location } from "@/lib/locations";
-import { getFeaturedPosts } from "@/lib/posts";
+import { getFeaturedPosts } from "@/lib/content/blog";
 import {
   buildBreadcrumbSchema,
   buildFAQSchema,

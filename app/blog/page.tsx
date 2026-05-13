@@ -4,7 +4,8 @@ import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getPosts, type Post } from "@/lib/posts";
+import { getPosts } from "@/lib/content/blog";
+import type { Post } from "@/lib/posts";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {

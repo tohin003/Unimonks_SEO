@@ -213,7 +213,7 @@ function parsePostBody(body: string): PostSection[] {
     .filter((section) => section.paragraphs.length || section.bullets?.length);
 }
 
-function toPost(record: PostRecord): Post {
+export function toPost(record: PostRecord): Post {
   return {
     ...record,
     sections: parsePostBody(record.body),

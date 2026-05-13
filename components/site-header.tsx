@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { siteConfig } from "@/lib/site";
 import { Logo } from "@/components/logo";
+import { getSiteSettings } from "@/lib/content/site";
 
 const navLinks = [
   { href: "/#programs", label: "Courses" },
@@ -11,7 +11,8 @@ const navLinks = [
   { href: "/about", label: "About" },
 ];
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const siteConfig = await getSiteSettings();
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 md:px-10">

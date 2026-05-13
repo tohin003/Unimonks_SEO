@@ -4,16 +4,17 @@ import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getFeaturedPosts } from "@/lib/content/blog";
 import { getLocationBySlug } from "@/lib/content/locations";
 import { getPrograms } from "@/lib/content/programs";
+import { getSiteSettings } from "@/lib/content/site";
 import { getOtherLocations, type Location } from "@/lib/locations";
-import { getFeaturedPosts } from "@/lib/content/blog";
 import {
   buildBreadcrumbSchema,
   buildFAQSchema,
   ORG_ID,
 } from "@/lib/schemas";
-import { absoluteUrl, jsonLdString, siteConfig, type Program } from "@/lib/site";
+import { absoluteUrl, jsonLdString, type Program } from "@/lib/site";
 
 type LocationPageViewProps = {
   slug: string;
@@ -26,13 +27,18 @@ export async function LocationPageView({ slug }: LocationPageViewProps) {
   }
 
   const otherLocations = getOtherLocations(location.slug);
-  const [featuredPosts, programs] = await Promise.all([
+  const [featuredPosts, programs, siteConfig] = await Promise.all([
     getFeaturedPosts(),
     getPrograms(),
+    getSiteSettings(),
   ]);
   const canonicalUrl = absoluteUrl(`/cuet-coaching-in-${location.slug}`);
 
-  const localServiceSchema = buildLocalServiceSchema(location, programs);
+  const localServiceSchema = buildLocalServiceSchema(
+    location,
+    programs,
+    siteConfig.name,
+  );
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", url: siteConfig.siteUrl },
     { name: location.area, url: canonicalUrl },
@@ -335,7 +341,11 @@ export async function LocationPageView({ slug }: LocationPageViewProps) {
   );
 }
 
-function buildLocalServiceSchema(location: Location, programs: Program[]) {
+function buildLocalServiceSchema(
+  location: Location,
+  programs: Program[],
+  organizationName: string,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -353,7 +363,7 @@ function buildLocalServiceSchema(location: Location, programs: Program[]) {
     },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
-      name: `${siteConfig.name} coaching programmes`,
+      name: `${organizationName} coaching programmes`,
       itemListElement: programs.map((program, index) => ({
         "@type": "Offer",
         position: index + 1,

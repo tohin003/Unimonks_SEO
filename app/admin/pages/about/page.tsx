@@ -1,33 +1,29 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
+import { getAboutContent } from "@/lib/content/about";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { AboutEditor } from "./about-editor";
 
 export const metadata: Metadata = { title: "About page" };
 
-export default function AdminAboutPage() {
+export default async function AdminAboutContentPage() {
+  const content = await getAboutContent();
+
   return (
-    <SectionPlaceholder
-      eyebrow="Pages · About"
-      title="Edit the About page."
-      description="Founder story, four guiding commitments, and the contact CTA on /about."
-      livePath="/about"
-      fields={[
-        { name: "Hero eyebrow + H1", description: "Page-level intro." },
-        { name: "Hero subhead", description: "Paragraph below the H1." },
-        { name: "Founded panel", description: "Founding year + short note." },
-        {
-          name: "Founder card",
-          description: "Name, role, qualifications, photo, full bio paragraph.",
-        },
-        {
-          name: "Commitments grid",
-          description: "Four panel cards with title + body.",
-        },
-        {
-          name: "Press strip",
-          description: "Settings · Press mentions controls this list.",
-        },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Pages · About</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Edit the About page sections.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Hero, founded + what-we-run panels, founder section intro, four
+          commitments, and visit intro. The press strip pulls from Settings ·
+          Press; the founder card pulls from Pages · Faculty.
+        </p>
+      </header>
+      <AboutEditor initial={content} dbConfigured={isDbConfigured()} />
+    </div>
   );
 }

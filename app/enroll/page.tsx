@@ -4,6 +4,7 @@ import Link from "next/link";
 import { LeadForm } from "@/components/lead-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getEnrollContent } from "@/lib/content/enroll";
 import { getPrograms } from "@/lib/content/programs";
 import { jsonLdString, siteConfig } from "@/lib/site";
 
@@ -31,23 +32,12 @@ const enrollSchema = {
   url: `${siteConfig.siteUrl}/enroll`,
 };
 
-const counselingPoints = [
-  {
-    title: "Batch guidance",
-    body: "Understand which course or batch makes sense for your class, exam year, and target universities.",
-  },
-  {
-    title: "Subject planning",
-    body: "Discuss GT, English, and domain subject balance so your preparation is realistic from the start.",
-  },
-  {
-    title: "Admissions clarity",
-    body: "Get help with the bigger picture too, including DU goals, counseling, and what happens after the exam.",
-  },
-];
-
 export default async function EnrollPage() {
-  const programs = await getPrograms();
+  const [programs, content] = await Promise.all([
+    getPrograms(),
+    getEnrollContent(),
+  ]);
+  const { counselingPoints } = content;
   return (
     <>
       <script
@@ -59,15 +49,12 @@ export default async function EnrollPage() {
         <section className="section-shell py-14 md:py-20">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_minmax(0,1fr)]">
             <div>
-              <span className="eyebrow">Book Counseling</span>
+              <span className="eyebrow">{content.hero.eyebrow}</span>
               <h1 className="mt-6 font-headline text-5xl leading-[0.96] text-primary md:text-7xl">
-                Speak with the UNIMONKS team before you choose your next step.
+                {content.hero.headline}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                Use this page to ask about CUET coaching in Munirka, batch
-                options, GT and English support, domain subjects, or admissions
-                guidance. The form below includes a phone number field so the
-                team can call you back directly.
+                {content.hero.description}
               </p>
               <div className="mt-8 grid gap-4">
                 {counselingPoints.map((point) => (
@@ -107,8 +94,8 @@ export default async function EnrollPage() {
               </div>
             </div>
             <LeadForm
-              title="Book your CUET counseling session"
-              description="Share your name, phone number, exam year, and what you need help with. The team will follow up with the right next step."
+              title={content.leadFormCopy.title}
+              description={content.leadFormCopy.description}
               submitLabel="Request counseling"
               source="enroll-page"
               tone="dark"

@@ -1,33 +1,28 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
-import { knowledgeTracks } from "@/lib/site";
+import { getHubContent } from "@/lib/content/hub";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { HubEditor } from "./hub-editor";
 
 export const metadata: Metadata = { title: "Knowledge Hub" };
 
-export default function AdminHubPage() {
+export default async function AdminHubContentPage() {
+  const content = await getHubContent();
+
   return (
-    <SectionPlaceholder
-      eyebrow="Pages · Knowledge Hub"
-      title="Edit the Knowledge Hub page."
-      description={`Hero copy + the ${knowledgeTracks.length} topic tracks shown on /hub and in the footer.`}
-      livePath="/hub"
-      fields={[
-        { name: "Hero eyebrow + H1", description: "Page intro." },
-        { name: "Hero subhead", description: "Paragraph beneath the H1." },
-        {
-          name: "Knowledge tracks",
-          description: "Settings · Knowledge tracks controls this list.",
-        },
-        {
-          name: "How to use panel",
-          description: "Right-side intro panel above the article grid.",
-        },
-        {
-          name: "Lead form copy",
-          description: "Title + description on the in-page LeadForm.",
-        },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Pages · Knowledge Hub</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Edit the Knowledge Hub page sections.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Hero copy, how-to-use panel, and lead-form copy. Topic tracks are
+          edited in Settings · Knowledge tracks.
+        </p>
+      </header>
+      <HubEditor initial={content} dbConfigured={isDbConfigured()} />
+    </div>
   );
 }

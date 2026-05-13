@@ -1,32 +1,28 @@
 import type { Metadata } from "next";
 
-import { SectionPlaceholder } from "@/app/admin/_components/section-placeholder";
+import { getEnrollContent } from "@/lib/content/enroll";
+import { isDbConfigured } from "@/lib/db/client";
+
+import { EnrollEditor } from "./enroll-editor";
 
 export const metadata: Metadata = { title: "Enroll page" };
 
-export default function AdminEnrollPage() {
+export default async function AdminEnrollContentPage() {
+  const content = await getEnrollContent();
+
   return (
-    <SectionPlaceholder
-      eyebrow="Pages · Enroll"
-      title="Edit the Enroll page."
-      description="Counseling-focused conversion page at /enroll."
-      livePath="/enroll"
-      fields={[
-        { name: "Hero eyebrow + H1", description: "Page intro." },
-        { name: "Hero subhead", description: "Paragraph beneath the H1." },
-        {
-          name: "Counseling points",
-          description: "Three panel cards (Batch / Subject / Admissions).",
-        },
-        {
-          name: "Dark contact card",
-          description: "Address + phone + WhatsApp panel.",
-        },
-        {
-          name: "Programs strip",
-          description: "Re-uses the global programs list.",
-        },
-      ]}
-    />
+    <div className="space-y-6">
+      <header>
+        <span className="eyebrow">Pages · Enroll</span>
+        <h1 className="mt-5 font-headline text-4xl leading-tight text-primary md:text-5xl">
+          Edit the Enroll page sections.
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          Hero copy, counseling-point cards, and lead-form copy. The dark
+          contact card pulls the address and phone from Site Settings.
+        </p>
+      </header>
+      <EnrollEditor initial={content} dbConfigured={isDbConfigured()} />
+    </div>
   );
 }

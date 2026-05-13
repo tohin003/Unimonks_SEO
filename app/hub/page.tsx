@@ -4,6 +4,7 @@ import { LeadForm } from "@/components/lead-form";
 import { PostCard } from "@/components/post-card";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getHubContent } from "@/lib/content/hub";
 import { getKnowledgeTracks } from "@/lib/content/knowledge-tracks";
 import { getFeaturedPosts, getPosts } from "@/lib/posts";
 import { jsonLdString, siteConfig } from "@/lib/site";
@@ -25,10 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default async function KnowledgeHubPage() {
-  const [posts, featuredPosts, knowledgeTracks] = await Promise.all([
+  const [posts, featuredPosts, knowledgeTracks, content] = await Promise.all([
     getPosts(),
     getFeaturedPosts(),
     getKnowledgeTracks(),
+    getHubContent(),
   ]);
   const leadPost = featuredPosts[0];
   const morePosts = posts.filter((post) => post.slug !== leadPost?.slug);
@@ -58,15 +60,12 @@ export default async function KnowledgeHubPage() {
         <section className="section-shell py-14 md:py-20">
           <div className="grid gap-10 lg:grid-cols-[0.9fr_minmax(0,1fr)]">
             <div>
-              <span className="eyebrow">CUET Study Resources</span>
+              <span className="eyebrow">{content.hero.eyebrow}</span>
               <h1 className="mt-6 font-headline text-5xl leading-[0.96] text-primary md:text-7xl">
-                Articles and topic clusters that help students prepare with more
-                clarity.
+                {content.hero.headline}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                Use the hub to read about GT, English, domain subjects,
-                admissions strategy, and the questions students usually ask
-                before choosing CUET coaching in Munirka.
+                {content.hero.description}
               </p>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
@@ -88,15 +87,12 @@ export default async function KnowledgeHubPage() {
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
             {leadPost ? <PostCard post={leadPost} featured /> : null}
             <aside className="panel self-start p-6">
-              <span className="eyebrow">How To Use This Page</span>
+              <span className="eyebrow">{content.howToUse.eyebrow}</span>
               <h2 className="mt-5 font-headline text-3xl leading-tight text-primary">
-                Start with the topic that matches your biggest question.
+                {content.howToUse.headline}
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-600">
-                If you are confused about coaching, start with local guidance.
-                If GT, English, or admissions feels weak, choose that topic and
-                keep reading in sequence. The goal is to turn search visits into
-                real understanding.
+                {content.howToUse.description}
               </p>
             </aside>
           </div>
@@ -121,8 +117,8 @@ export default async function KnowledgeHubPage() {
               </p>
             </div>
             <LeadForm
-              title="Ask for a call from the team"
-              description="Share what you need help with and UNIMONKS will guide you on batches, preparation, and admissions support."
+              title={content.leadFormCopy.title}
+              description={content.leadFormCopy.description}
               submitLabel="Request a counseling call"
               source="knowledge-hub"
             />

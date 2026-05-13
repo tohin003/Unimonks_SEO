@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PressStrip } from "@/components/press-strip";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getAboutContent } from "@/lib/content/about";
 import { getFeaturedFaculty } from "@/lib/content/faculty";
 import { buildBreadcrumbSchema, ORG_ID } from "@/lib/schemas";
 import { absoluteUrl, jsonLdString, siteConfig } from "@/lib/site";
@@ -43,7 +44,10 @@ const aboutPageSchema = {
 };
 
 export default async function AboutPage() {
-  const featuredFaculty = await getFeaturedFaculty();
+  const [featuredFaculty, content] = await Promise.all([
+    getFeaturedFaculty(),
+    getAboutContent(),
+  ]);
   const founder =
     featuredFaculty.find((member) => member.slug === "arvind-rao") ??
     featuredFaculty[0];
@@ -67,43 +71,35 @@ export default async function AboutPage() {
           </nav>
           <div className="mt-8 grid gap-10 lg:grid-cols-[0.95fr_minmax(0,1fr)]">
             <div>
-              <span className="eyebrow">About UNIMONKS</span>
+              <span className="eyebrow">{content.hero.eyebrow}</span>
               <h1 className="mt-6 font-headline text-5xl leading-[0.96] text-primary md:text-7xl">
-                A Munirka coaching centre built for the way CUET actually works.
+                {content.hero.headline}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                UNIMONKS was founded in {siteConfig.foundingDate} by Dr Arvind
-                Rao to give CUET aspirants in South Delhi one place that treats
-                GT, English, domain subjects, and admissions as a single
-                coordinated programme. The Munirka centre is the home of that
-                work — close to JNU, RK Puram, and Vasant Kunj, with batches
-                that respect the weekly rhythm of school students rather than
-                stretching them into burnout.
+                {content.hero.description}
               </p>
             </div>
             <div className="grid gap-3">
               <article className="panel p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-                  Founded
+                  {content.foundedPanel.eyebrow}
                 </p>
                 <p className="mt-3 font-headline text-3xl text-primary">
                   {siteConfig.foundingDate}
                 </p>
                 <p className="mt-3 text-sm leading-7 text-slate-600">
-                  In Munirka, New Delhi, with the goal of building a focused
-                  CUET preparation system for South Delhi.
+                  {content.foundedPanel.description}
                 </p>
               </article>
               <article className="panel p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-                  What we run
+                  {content.whatWeRunPanel.eyebrow}
                 </p>
                 <p className="mt-3 font-headline text-3xl text-primary">
-                  Foundation · Target · Admissions
+                  {content.whatWeRunPanel.title}
                 </p>
                 <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Three tracks that cover the full CUET cycle — preparation,
-                  rank-oriented mocks, and DU + JNU admissions guidance.
+                  {content.whatWeRunPanel.description}
                 </p>
               </article>
             </div>
@@ -114,15 +110,12 @@ export default async function AboutPage() {
           <section className="section-shell py-8 md:py-14">
             <div className="grid gap-10 lg:grid-cols-[0.85fr_minmax(0,1fr)]">
               <div>
-                <span className="eyebrow">Founder</span>
+                <span className="eyebrow">{content.founderIntro.eyebrow}</span>
                 <h2 className="mt-5 section-title">
-                  The conviction the centre is built on.
+                  {content.founderIntro.headline}
                 </h2>
                 <p className="mt-5 text-base leading-8 text-slate-600">
-                  CUET preparation in Delhi was scattered before UNIMONKS — GT,
-                  English, and domain papers ran as separate tracks, and
-                  admissions support stopped at the exam. The centre was built
-                  to fix that gap rather than to add another option.
+                  {content.founderIntro.description}
                 </p>
               </div>
               <article className="panel p-6 md:p-8" id="founder">
@@ -166,57 +159,19 @@ export default async function AboutPage() {
               </p>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <article className="panel p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-                  One programme
-                </p>
-                <p className="mt-3 text-lg font-semibold text-primary">
-                  GT, English, domain, admissions — together.
-                </p>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  No paper is treated as the optional one. The batch schedule
-                  keeps all four threads alive each week so nothing collapses
-                  in the final month.
-                </p>
-              </article>
-              <article className="panel p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-                  Mocks reviewed, not just taken
-                </p>
-                <p className="mt-3 text-lg font-semibold text-primary">
-                  Every mock produces a written error log.
-                </p>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Test counts are easy. Pattern recognition is hard. The centre
-                  optimises for the second because that is what moves rank.
-                </p>
-              </article>
-              <article className="panel p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-                  Admissions before, during, after
-                </p>
-                <p className="mt-3 text-lg font-semibold text-primary">
-                  Counseling continues into DU and JNU UG.
-                </p>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Most institutes stop at exam day. UNIMONKS continues into
-                  preference lists, document readiness, and the CSAS portal so
-                  the final outcome is not left to last-minute guesswork.
-                </p>
-              </article>
-              <article className="panel p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-                  Local centre, real conversations
-                </p>
-                <p className="mt-3 text-lg font-semibold text-primary">
-                  Parents and students can walk in.
-                </p>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  The Munirka centre is set up for face-to-face progress
-                  meetings. The work is easier to trust when families can see
-                  the room their child is studying in.
-                </p>
-              </article>
+              {content.commitments.map((commitment) => (
+                <article key={commitment.eyebrow} className="panel p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+                    {commitment.eyebrow}
+                  </p>
+                  <p className="mt-3 text-lg font-semibold text-primary">
+                    {commitment.title}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {commitment.description}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -228,15 +183,12 @@ export default async function AboutPage() {
         <section className="section-shell py-8 md:py-14">
           <div className="panel grid gap-8 p-6 md:grid-cols-[1fr_0.9fr] md:p-10">
             <div>
-              <span className="eyebrow">Visit the centre</span>
+              <span className="eyebrow">{content.visitIntro.eyebrow}</span>
               <h2 className="mt-5 section-title">
-                Walk in to the Munirka centre or book a counseling call.
+                {content.visitIntro.headline}
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
-                The team prefers in-person conversations — they make batch
-                fit, subject planning, and admissions strategy easier to talk
-                through. Walk in any working evening or book a slot in
-                advance.
+                {content.visitIntro.description}
               </p>
             </div>
             <address className="not-italic rounded-[24px] bg-[#17233b] p-6 text-white">

@@ -48,3 +48,4 @@ data/leads.ndjson
 # local image uploads (dev-only filesystem fallback for missing R2)
 /public/uploads/*
 !/public/uploads/.gitkeep
+.env*.local

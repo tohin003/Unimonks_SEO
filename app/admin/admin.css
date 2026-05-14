@@ -14,6 +14,26 @@
 .admin-sidebar nav {
   position: sticky;
   top: 5.5rem;
+  /* Independent scroll: the nav now scrolls inside itself when it's
+     taller than the viewport, instead of being clipped at the bottom. */
+  max-height: calc(100vh - 6.5rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225 / 0.7) transparent;
+  padding-right: 0.25rem;
+}
+
+.admin-sidebar nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-sidebar nav::-webkit-scrollbar-thumb {
+  background: rgb(203 213 225 / 0.7);
+  border-radius: 9999px;
+}
+
+.admin-sidebar nav::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @media (max-width: 1023px) {
@@ -28,5 +48,7 @@
   .admin-sidebar nav {
     position: relative;
     top: auto;
+    max-height: none;
+    overflow: visible;
   }
 }

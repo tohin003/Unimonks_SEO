@@ -28,7 +28,7 @@ const LocalFaqSchema = z.object({
   answer: z.string().min(1).max(2000),
 });
 
-export const LocationInputSchema = z.object({
+const LocationInputSchema = z.object({
   slug: z.string().min(1).max(120),
   area: z.string().min(1).max(160),
   fullName: z.string().min(1).max(280),

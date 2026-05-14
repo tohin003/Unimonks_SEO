@@ -21,7 +21,7 @@ import {
 
 import { recordAudit } from "./audit";
 
-export const BlogPostInputSchema = z.object({
+const BlogPostInputSchema = z.object({
   slug: z.string().max(160).optional().default(""),
   title: z.string().min(1).max(280),
   description: z.string().min(1).max(500),

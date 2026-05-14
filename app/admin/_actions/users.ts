@@ -16,7 +16,7 @@ import {
   type ActionResult,
 } from "./types";
 
-export const CreateUserSchema = z.object({
+const CreateUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(280),
   password: z.string().min(8).max(120),
@@ -79,7 +79,7 @@ export async function createUserAction(
   }
 }
 
-export const UpdateRoleSchema = z.object({
+const UpdateRoleSchema = z.object({
   id: z.string().uuid(),
   role: z.enum(["owner", "editor"]),
 });

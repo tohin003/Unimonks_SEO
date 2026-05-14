@@ -21,7 +21,7 @@ const ItemSchema = z.object({
   body: z.string().min(1).max(2000),
 });
 
-export const EnrollContentSchema = z.object({
+const EnrollContentSchema = z.object({
   hero: z.object({
     eyebrow: z.string().min(1).max(160),
     headline: z.string().min(1).max(500),

@@ -28,7 +28,7 @@ const CommitmentSchema = z.object({
   description: z.string().min(1).max(2000),
 });
 
-export const AboutContentSchema = z.object({
+const AboutContentSchema = z.object({
   hero: SectionIntro,
   foundedPanel: z.object({
     eyebrow: z.string().min(1).max(160),

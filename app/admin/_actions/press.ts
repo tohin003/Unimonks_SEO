@@ -27,7 +27,7 @@ const PressMentionSchema = z.object({
     .or(z.literal("")),
 });
 
-export const PressMentionsInputSchema = z.array(PressMentionSchema).max(30);
+const PressMentionsInputSchema = z.array(PressMentionSchema).max(30);
 
 export type PressMentionsInput = z.infer<typeof PressMentionsInputSchema>;
 

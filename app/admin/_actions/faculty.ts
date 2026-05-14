@@ -35,7 +35,7 @@ const FacultyClusterSchema = z.object({
   count: z.string().min(1).max(80),
 });
 
-export const FacultyInputSchema = z.object({
+const FacultyInputSchema = z.object({
   featured: z.array(FacultyMemberSchema).max(40),
   clusters: z.array(FacultyClusterSchema).max(20),
 });

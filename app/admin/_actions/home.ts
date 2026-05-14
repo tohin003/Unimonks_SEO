@@ -22,7 +22,7 @@ const ItemSchema = z.object({
   body: z.string().min(1).max(2000),
 });
 
-export const HomeContentSchema = z.object({
+const HomeContentSchema = z.object({
   heroSubhead: z.string().min(1).max(2000),
   proofPoints: z.array(ItemSchema).max(8),
   programsIntro: z.object({

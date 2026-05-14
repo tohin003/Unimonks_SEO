@@ -22,7 +22,7 @@ const SectionIntro = z.object({
   description: z.string().min(1).max(2000),
 });
 
-export const HubContentSchema = z.object({
+const HubContentSchema = z.object({
   hero: SectionIntro,
   howToUse: SectionIntro,
   leadFormCopy: z.object({

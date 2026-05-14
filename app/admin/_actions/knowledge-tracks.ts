@@ -21,7 +21,7 @@ const KnowledgeTrackSchema = z.object({
   description: z.string().min(1, "Description is required").max(1000),
 });
 
-export const KnowledgeTracksInputSchema = z
+const KnowledgeTracksInputSchema = z
   .array(KnowledgeTrackSchema)
   .max(20);
 

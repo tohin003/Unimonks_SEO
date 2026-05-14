@@ -41,7 +41,7 @@ const GroupSchema = z.object({
   outcomes: z.array(OutcomeSchema).max(40),
 });
 
-export const ResultsInputSchema = z.array(GroupSchema).max(10);
+const ResultsInputSchema = z.array(GroupSchema).max(10);
 
 export type ResultsInput = z.infer<typeof ResultsInputSchema>;
 

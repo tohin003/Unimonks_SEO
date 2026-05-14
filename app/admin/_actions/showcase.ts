@@ -31,7 +31,7 @@ const SlideSchema = z.object({
   enabled: z.boolean().default(true),
 });
 
-export const ShowcaseSlidesInputSchema = z.array(SlideSchema).max(24);
+const ShowcaseSlidesInputSchema = z.array(SlideSchema).max(24);
 
 export type ShowcaseSlideInput = z.infer<typeof SlideSchema>;
 export type ShowcaseSlidesInput = z.infer<typeof ShowcaseSlidesInputSchema>;

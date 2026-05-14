@@ -16,7 +16,7 @@ import {
   type ActionResult,
 } from "./types";
 
-export const SiteSettingsInputSchema = z.object({
+const SiteSettingsInputSchema = z.object({
   name: z.string().min(1).max(160),
   shortName: z.string().min(1).max(160),
   title: z.string().min(1).max(280),

@@ -20,7 +20,7 @@ const FaqItemSchema = z.object({
   answer: z.string().min(1, "Answer is required").max(2000),
 });
 
-export const FaqInputSchema = z.array(FaqItemSchema).max(40);
+const FaqInputSchema = z.array(FaqItemSchema).max(40);
 
 export type FaqInput = z.infer<typeof FaqInputSchema>;
 

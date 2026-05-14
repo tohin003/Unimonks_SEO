@@ -19,7 +19,7 @@ const ProgramSchema = z.object({
     .max(20, "Up to 20 bullets per program"),
 });
 
-export const ProgramsInputSchema = z
+const ProgramsInputSchema = z
   .array(ProgramSchema)
   .max(20, "Up to 20 programs");
 

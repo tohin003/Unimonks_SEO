@@ -30,7 +30,7 @@ export async function createUserAction(
 ): Promise<ActionResult> {
   const ctx = await getAdminContext();
   if (!ctx.authenticated) return notAuthenticated();
-  if (ctx.user && ctx.user.role !== "owner") {
+  if (!ctx.user || ctx.user.role !== "owner") {
     return { ok: false, message: "Only owners can invite new users." };
   }
   const db = getDb();
@@ -89,7 +89,7 @@ export async function updateUserRoleAction(
 ): Promise<ActionResult> {
   const ctx = await getAdminContext();
   if (!ctx.authenticated) return notAuthenticated();
-  if (ctx.user && ctx.user.role !== "owner") {
+  if (!ctx.user || ctx.user.role !== "owner") {
     return { ok: false, message: "Only owners can change roles." };
   }
   const db = getDb();
@@ -132,7 +132,7 @@ export async function updateUserRoleAction(
 export async function deleteUserAction(id: string): Promise<ActionResult> {
   const ctx = await getAdminContext();
   if (!ctx.authenticated) return notAuthenticated();
-  if (ctx.user && ctx.user.role !== "owner") {
+  if (!ctx.user || ctx.user.role !== "owner") {
     return { ok: false, message: "Only owners can delete users." };
   }
   if (ctx.user && ctx.user.id === id) {

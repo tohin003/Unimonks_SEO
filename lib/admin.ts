@@ -43,6 +43,11 @@ export function createAdminSessionValue() {
 
 export function isAdminSessionValue(value: string | undefined) {
   if (!isAdminProtected()) {
+    // Dev convenience only — on Vercel / production, refuse to grant
+    // access just because ADMIN_PASSWORD happens to be unset.
+    if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+      return false;
+    }
     return true;
   }
 
